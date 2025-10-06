@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useGlobalContext } from "@/hooks/useGlobalContext";
 import { Profile } from "@liff/get-profile";
+import MessageList from "./_components/MessageList";
 
 export default function Home() {
   const { liff, liffError } = useGlobalContext();
@@ -20,16 +21,13 @@ export default function Home() {
   }, [liff]);
 
   return (
-    <main>
-      {liff && <p>LIFF init succeeded.</p>}
-      {liffError && <p>LIFF init failed.</p>}
-      {profile && (
-        <>
-          <p>Display Name: {profile.displayName}</p>
-          <p>User ID: {profile.userId}</p>
-          <p>Picture URL: {profile.pictureUrl}</p>
-          <p>Status Message: {profile.statusMessage}</p>
-        </>
+    <main className="min-h-screen bg-gray-100">
+      {liffError ? (
+        <div className="flex items-center justify-center min-h-screen">
+          <p className="text-red-600">LIFF初期化に失敗しました</p>
+        </div>
+      ) : (
+        <MessageList />
       )}
     </main>
   );
