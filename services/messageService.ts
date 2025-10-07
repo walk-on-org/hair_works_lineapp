@@ -1,4 +1,8 @@
-import { Applicant, ApplicantMessageResponse } from "@/types/message";
+import {
+  Applicant,
+  ApplicantMessageResponse,
+  SendMessageResponse,
+} from "@/types/message";
 
 // APIのベースURL（環境変数から取得）
 const API_BASE_URL =
@@ -46,35 +50,68 @@ export async function fetchApplicantMessageList(
   }
 }
 
-/*// 特定の会話のメッセージ履歴取得API
-export async function fetchMessageHistory(
-  recipientId: string
-): Promise<ChatMessage[]> {
-  try {
-    return await apiCall<ChatMessage[]>(`/messages/${recipientId}/history`);
-  } catch (error) {
-    console.error("メッセージ履歴の取得に失敗しました:", error);
-    throw error;
-  }
-}
-
 // メッセージ送信API
 export async function sendMessage(
-  recipientId: string,
-  content: string
-): Promise<ChatMessage> {
+  applicantId: number,
+  message: string,
+  attachment: File | null,
+  contentType: string,
+  accessToken: string
+): Promise<Applicant[]> {
   try {
-    return await apiCall<ChatMessage>(`/messages/${recipientId}`, {
-      method: "POST",
-      body: JSON.stringify({ content }),
-    });
+    const result = await apiCall<SendMessageResponse>(
+      `/api/v1/applicants/messages/send`,
+      {
+        method: "POST",
+        body: JSON.stringify({
+          applicantid: applicantId,
+          message: message,
+          attachment: attachment,
+          contenttype: contentType,
+        }),
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    return result.data.applicants;
   } catch (error) {
     console.error("メッセージの送信に失敗しました:", error);
     throw error;
   }
 }
 
+// メッセージ削除API
+export async function removeMessage(
+  applicantId: number,
+  messageId: number,
+  accessToken: string
+): Promise<Applicant[]> {
+  try {
+    const result = await apiCall<SendMessageResponse>(
+      `/api/v1/applicants/messages/delete`,
+      {
+        method: "POST",
+        body: JSON.stringify({
+          applicantid: applicantId,
+          messageid: messageId,
+        }),
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    return result.data.applicants;
+  } catch (error) {
+    console.error("メッセージの削除に失敗しました:", error);
+    throw error;
+  }
+}
+
 // 未読メッセージ数取得API
+/*
 export async function fetchUnreadCount(): Promise<number> {
   try {
     const result = await apiCall<{ count: number }>("/messages/unread-count");

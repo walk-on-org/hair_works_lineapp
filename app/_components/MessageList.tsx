@@ -2,8 +2,12 @@
 
 import { useState, useEffect } from "react";
 import MessageDetail from "./MessageDetail";
-import { Applicant } from "@/types/message";
-import { fetchApplicantMessageList } from "@/services/messageService";
+import { Applicant, Message } from "@/types/message";
+import {
+  fetchApplicantMessageList,
+  sendMessage,
+  removeMessage,
+} from "@/services/messageService";
 import { useGlobalContext } from "@/hooks/useGlobalContext";
 import { ChatBubbleLeftEllipsisIcon } from "@heroicons/react/24/outline";
 
@@ -16,6 +20,8 @@ export default function MessageList() {
     null
   );
 
+  const accessToken = "4UukdhjBF9tk46rKaDG5OgES6ONG6ur6t5Q0ZUc7RgLMY7Aj";
+
   // メッセージ一覧を取得
   useEffect(() => {
     const loadMessages = async () => {
@@ -27,10 +33,7 @@ export default function MessageList() {
 
         // LIFFが利用可能でログインしている場合は認証付きでAPI呼び出し
         if (liff && liff.isLoggedIn()) {
-          const accessToken = liff.getAccessToken();
-          fetchedApplicants = await fetchApplicantMessageList(
-            "4UukdhjBF9tk46rKaDG5OgES6ONG6ur6t5Q0ZUc7RgLMY7Aj"
-          );
+          fetchedApplicants = await fetchApplicantMessageList(accessToken);
         }
 
         setApplicants(fetchedApplicants);
@@ -88,9 +91,44 @@ export default function MessageList() {
     setSelectedApplicant(null);
   };
 
-  const handleSendMessage = (content: string) => {
-    console.log(`メッセージを送信: ${content}`);
-    // ここで実際のメッセージ送信処理を実装
+  const handleSendMessage = async (
+    applicantId: number,
+    message: string
+  ): Promise<Message[]> => {
+    // 送信API
+    const fetchedApplicants: Applicant[] = await sendMessage(
+      applicantId,
+      message,
+      null,
+      "text",
+      accessToken
+    );
+    // 送信後の一覧を更新
+    setApplicants(fetchedApplicants);
+    // 送信後のメッセージ履歴
+    const fetchedApplicant = fetchedApplicants.find(
+      (applicant) => applicant.id === applicantId
+    );
+    return fetchedApplicant?.messages ?? [];
+  };
+
+  const handleRemoveMessage = async (
+    applicantId: number,
+    messageId: number
+  ): Promise<Message[]> => {
+    // 削除API
+    const fetchedApplicants: Applicant[] = await removeMessage(
+      applicantId,
+      messageId,
+      accessToken
+    );
+    // 削除後の一覧を更新
+    setApplicants(fetchedApplicants);
+    // 削除後のメッセージ履歴
+    const fetchedApplicant = fetchedApplicants.find(
+      (applicant) => applicant.id === applicantId
+    );
+    return fetchedApplicant?.messages ?? [];
   };
 
   // メッセージ詳細ページを表示
@@ -100,6 +138,7 @@ export default function MessageList() {
         applicant={selectedApplicant}
         onBack={handleBackToList}
         onSendMessage={handleSendMessage}
+        onRemoveMessage={handleRemoveMessage}
       />
     );
   }

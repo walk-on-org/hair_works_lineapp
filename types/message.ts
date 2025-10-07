@@ -6,6 +6,14 @@ export interface ApplicantMessageResponse {
   };
 }
 
+export interface SendMessageResponse {
+  status: number;
+  data: {
+    applicants: Applicant[];
+    result: number;
+  };
+}
+
 export interface Applicant {
   id: number;
   corporation_id: number;

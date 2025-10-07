@@ -5,47 +5,65 @@ import { Applicant, Message } from "@/types/message";
 import {
   ChevronLeftIcon,
   PaperAirplaneIcon,
+  TrashIcon,
 } from "@heroicons/react/24/outline";
 
 interface MessageDetailProps {
   applicant: Applicant;
   onBack: () => void;
-  onSendMessage: (content: string) => void;
+  onSendMessage: (applicantId: number, message: string) => Promise<Message[]>;
+  onRemoveMessage: (
+    applicantId: number,
+    messageId: number
+  ) => Promise<Message[]>;
 }
 
 export default function MessageDetail({
   applicant,
   onBack,
   onSendMessage,
+  onRemoveMessage,
 }: MessageDetailProps) {
   const [messages, setMessages] = useState<Message[]>(applicant.messages);
-  const [newMessage, setNewMessage] = useState("");
+  const [inputMessage, setInputMessage] = useState("");
+  const [selectedMessage, setSelectedMessage] = useState<Message | null>(null);
   const [rows, setRows] = useState(1);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const timerRef = useRef<NodeJS.Timeout | null>(null);
 
   // メッセージ送信
-  const handleSendMessage = () => {
-    if (newMessage.trim()) {
-      const message: Message = {
-        id: 0,
-        applicant_id: applicant.id,
-        sender_type: 2,
-        content_type: "text",
-        message: newMessage,
-        attachment: "",
-        already_read: 0,
-        created_at: new Date(),
-      };
-      setMessages([...messages, message]);
-      setNewMessage("");
-      onSendMessage(newMessage);
+  const handleSendMessage = async () => {
+    if (inputMessage.trim()) {
+      const newMessages = await onSendMessage(applicant.id, inputMessage);
+      setMessages(newMessages);
+      scrollToBottom();
+      setInputMessage("");
     }
+  };
+
+  // メッセージ削除
+  const handleRemoveMessage = async (messageId: number) => {
+    const newMessages = await onRemoveMessage(applicant.id, messageId);
+    setMessages(newMessages);
+    setSelectedMessage(null);
+  };
+
+  // メッセージ長押し
+  const handleTouchStart = (message: Message) => {
+    // 長押しを検知（800ms）
+    timerRef.current = setTimeout(() => {
+      setSelectedMessage(message); // メニューを表示する
+    }, 800);
+  };
+  const handleTouchEnd = () => {
+    // 長押し解除（タップなど）
+    if (timerRef.current) clearTimeout(timerRef.current);
   };
 
   // メッセージ入力エリアの行数を設定
   useEffect(() => {
-    setRows(newMessage.split("\n").length);
-  }, [newMessage]);
+    setRows(inputMessage.split("\n").length);
+  }, [inputMessage]);
 
   // メッセージ履歴の最後までスクロール
   const scrollToBottom = () => {
@@ -80,7 +98,7 @@ export default function MessageDetail({
   };
 
   return (
-    <div className="max-w-md mx-auto flex flex-col h-screen">
+    <div className="max-w-md mx-auto flex flex-col h-screen relative">
       {/* ヘッダー */}
       <div className="pt-3 pb-2 px-4 border-b border-blue-400 flex items-center space-x-3 justify-start">
         <button
@@ -160,17 +178,23 @@ export default function MessageDetail({
                   </div>
                 )}
                 {!message.deleted_at && (
-                  <div
-                    className={`max-w-xs lg:max-w-md px-4 py-2 rounded-lg text-gray-900 ${
-                      message.sender_type === 1
-                        ? "bg-gray-100"
-                        : "bg-green-400/50"
-                    }`}
-                  >
-                    <p className="text-sm whitespace-pre-wrap">
-                      {message.message}
-                    </p>
-                  </div>
+                  <>
+                    <div
+                      className={`max-w-xs lg:max-w-md px-4 py-2 rounded-lg text-gray-900 ${
+                        message.sender_type === 1
+                          ? "bg-gray-100"
+                          : "bg-green-400/50"
+                      }`}
+                      onTouchStart={() => handleTouchStart(message)}
+                      onTouchEnd={handleTouchEnd}
+                      onMouseDown={() => handleTouchStart(message)} // PC対応
+                      onMouseUp={handleTouchEnd}
+                    >
+                      <p className="text-sm whitespace-pre-wrap">
+                        {message.message}
+                      </p>
+                    </div>
+                  </>
                 )}
               </div>
             </div>
@@ -183,21 +207,49 @@ export default function MessageDetail({
       <div className="border-t border-gray-200 p-4">
         <div className="flex space-x-2 items-end">
           <textarea
-            value={newMessage}
-            onChange={(e) => setNewMessage(e.target.value)}
+            value={inputMessage}
+            onChange={(e) => setInputMessage(e.target.value)}
             placeholder="メッセージを入力..."
             className="flex-1 border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
             rows={rows}
+            maxLength={500}
           />
           <button
             onClick={handleSendMessage}
-            disabled={!newMessage.trim()}
+            disabled={!inputMessage.trim()}
             className="bg-blue-600 text-white p-2 aspect-square rounded-lg hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed"
           >
             <PaperAirplaneIcon className="w-5 h-5" />
           </button>
         </div>
       </div>
+
+      {/* メッセージ削除メニュー */}
+      {selectedMessage && (
+        <div className="absolute top-0 left-0 w-full h-full bg-black/50">
+          <div className="bg-white p-4 rounded-lg absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-80">
+            <p className="text-sm">
+              削除するとメッセージは復元できません。
+              <br />
+              削除しますか？
+            </p>
+            <div className="flex gap-2 mt-4 justify-around">
+              <button
+                className="bg-blue-600 text-white p-2 rounded-lg cursor-pointer w-28"
+                onClick={() => handleRemoveMessage(selectedMessage.id)}
+              >
+                削除
+              </button>
+              <button
+                className="border border-gray-600 bg-white text-gray-600 p-2 rounded-lg cursor-pointer w-28"
+                onClick={() => setSelectedMessage(null)}
+              >
+                キャンセル
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
