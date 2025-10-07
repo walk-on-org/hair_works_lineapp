@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Applicant, Message } from "@/types/message";
 import {
   ChevronLeftIcon,
@@ -21,7 +21,9 @@ export default function MessageDetail({
   const [messages, setMessages] = useState<Message[]>(applicant.messages);
   const [newMessage, setNewMessage] = useState("");
   const [rows, setRows] = useState(1);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
 
+  // メッセージ送信
   const handleSendMessage = () => {
     if (newMessage.trim()) {
       const message: Message = {
@@ -40,9 +42,18 @@ export default function MessageDetail({
     }
   };
 
+  // メッセージ入力エリアの行数を設定
   useEffect(() => {
     setRows(newMessage.split("\n").length);
   }, [newMessage]);
+
+  // メッセージ履歴の最後までスクロール
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({});
+  };
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages]);
 
   const formatTime = (date: Date) => {
     return date.toLocaleTimeString("ja-JP", {
@@ -141,21 +152,31 @@ export default function MessageDetail({
                   <p>{formatTime(new Date(message.created_at))}</p>
                 </div>
 
-                <div
-                  className={`max-w-xs lg:max-w-md px-4 py-2 rounded-lg text-gray-900 ${
-                    message.sender_type === 1
-                      ? "bg-gray-100"
-                      : "bg-green-400/50"
-                  }`}
-                >
-                  <p className="text-sm whitespace-pre-wrap">
-                    {message.message}
-                  </p>
-                </div>
+                {message.deleted_at && (
+                  <div className="max-w-xs lg:max-w-md px-2 py-1 rounded-full text-gray-900 bg-gray-200">
+                    <p className="text-xs whitespace-pre-wrap">
+                      メッセージが削除されました
+                    </p>
+                  </div>
+                )}
+                {!message.deleted_at && (
+                  <div
+                    className={`max-w-xs lg:max-w-md px-4 py-2 rounded-lg text-gray-900 ${
+                      message.sender_type === 1
+                        ? "bg-gray-100"
+                        : "bg-green-400/50"
+                    }`}
+                  >
+                    <p className="text-sm whitespace-pre-wrap">
+                      {message.message}
+                    </p>
+                  </div>
+                )}
               </div>
             </div>
           );
         })}
+        <div ref={messagesEndRef} />
       </div>
 
       {/* メッセージ入力エリア */}

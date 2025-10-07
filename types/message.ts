@@ -36,4 +36,5 @@ export interface Message {
   attachment: string;
   already_read: number;
   created_at: Date;
+  deleted_at?: Date | null;
 }
