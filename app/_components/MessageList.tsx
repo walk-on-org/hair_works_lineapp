@@ -7,6 +7,7 @@ import {
   fetchApplicantMessageList,
   sendMessage,
   removeMessage,
+  alreadyReadMessage,
 } from "@/services/messageService";
 import { useGlobalContext } from "@/hooks/useGlobalContext";
 import { ChatBubbleLeftEllipsisIcon } from "@heroicons/react/24/outline";
@@ -40,8 +41,6 @@ export default function MessageList() {
       } catch (err) {
         console.error("メッセージの読み込みに失敗:", err);
         setError("メッセージの読み込みに失敗しました");
-        // エラー時はサンプルデータを表示
-        setApplicants([]);
       } finally {
         setLoading(false);
       }
@@ -83,11 +82,23 @@ export default function MessageList() {
     }
   };
 
-  const handleMessageClick = (applicant: Applicant) => {
-    setSelectedApplicant(applicant);
+  const handleMessageClick = async (applicant: Applicant) => {
+    try {
+      // 選択した宛先を設定
+      setSelectedApplicant(applicant);
+      // 既読処理
+      const fetchedApplicants: Applicant[] = await alreadyReadMessage(
+        applicant.id,
+        accessToken
+      );
+      setApplicants(fetchedApplicants);
+    } catch (err) {
+      console.error("メッセージの既読に失敗:", err);
+    }
   };
 
   const handleBackToList = () => {
+    // 選択した宛先を解除
     setSelectedApplicant(null);
   };
 
@@ -95,40 +106,52 @@ export default function MessageList() {
     applicantId: number,
     message: string
   ): Promise<Message[]> => {
-    // 送信API
-    const fetchedApplicants: Applicant[] = await sendMessage(
-      applicantId,
-      message,
-      null,
-      "text",
-      accessToken
-    );
-    // 送信後の一覧を更新
-    setApplicants(fetchedApplicants);
-    // 送信後のメッセージ履歴
-    const fetchedApplicant = fetchedApplicants.find(
-      (applicant) => applicant.id === applicantId
-    );
-    return fetchedApplicant?.messages ?? [];
+    try {
+      // 送信API
+      const fetchedApplicants: Applicant[] = await sendMessage(
+        applicantId,
+        message,
+        null,
+        "text",
+        accessToken
+      );
+      // 送信後の一覧を更新
+      setApplicants(fetchedApplicants);
+      // 送信後のメッセージ履歴
+      const fetchedApplicant = fetchedApplicants.find(
+        (applicant) => applicant.id === applicantId
+      );
+      return fetchedApplicant?.messages ?? [];
+    } catch (err) {
+      console.error("メッセージの送信に失敗:", err);
+      setError("メッセージの送信に失敗しました");
+      return selectedApplicant?.messages ?? [];
+    }
   };
 
   const handleRemoveMessage = async (
     applicantId: number,
     messageId: number
   ): Promise<Message[]> => {
-    // 削除API
-    const fetchedApplicants: Applicant[] = await removeMessage(
-      applicantId,
-      messageId,
-      accessToken
-    );
-    // 削除後の一覧を更新
-    setApplicants(fetchedApplicants);
-    // 削除後のメッセージ履歴
-    const fetchedApplicant = fetchedApplicants.find(
-      (applicant) => applicant.id === applicantId
-    );
-    return fetchedApplicant?.messages ?? [];
+    try {
+      // 削除API
+      const fetchedApplicants: Applicant[] = await removeMessage(
+        applicantId,
+        messageId,
+        accessToken
+      );
+      // 削除後の一覧を更新
+      setApplicants(fetchedApplicants);
+      // 削除後のメッセージ履歴
+      const fetchedApplicant = fetchedApplicants.find(
+        (applicant) => applicant.id === applicantId
+      );
+      return fetchedApplicant?.messages ?? [];
+    } catch (err) {
+      console.error("メッセージの削除に失敗:", err);
+      setError("メッセージの削除に失敗しました");
+      return selectedApplicant?.messages ?? [];
+    }
   };
 
   // 宛先一覧に表示する最新メッセージを取得

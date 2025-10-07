@@ -110,6 +110,30 @@ export async function removeMessage(
   }
 }
 
+// メッセージ既読API
+export async function alreadyReadMessage(
+  applicantId: number,
+  accessToken: string
+): Promise<Applicant[]> {
+  try {
+    const result = await apiCall<SendMessageResponse>(
+      `/api/v1/applicants/messages/already`,
+      {
+        method: "POST",
+        body: JSON.stringify({ applicantid: applicantId }),
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    return result.data.applicants;
+  } catch (error) {
+    console.error("メッセージの既読に失敗しました:", error);
+    throw error;
+  }
+}
+
 // 未読メッセージ数取得API
 /*
 export async function fetchUnreadCount(): Promise<number> {
