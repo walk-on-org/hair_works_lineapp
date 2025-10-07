@@ -107,7 +107,7 @@ export default function MessageList() {
   return (
     <div className="max-w-md mx-auto flex flex-col h-screen">
       {/* ヘッダー */}
-      <div className="text-gray-900 p-6 border-b border-blue-400">
+      <div className="p-6 border-b border-blue-400">
         <h1 className="text-xl font-bold text-center">宛先</h1>
       </div>
 
