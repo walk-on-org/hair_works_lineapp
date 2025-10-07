@@ -22,6 +22,7 @@ export interface Applicant {
     url: string;
   };
   created_at: Date;
+  last_activity: Date;
   unread_count: number;
   messages: Message[];
 }
