@@ -131,6 +131,29 @@ export default function MessageList() {
     return fetchedApplicant?.messages ?? [];
   };
 
+  // 宛先一覧に表示する最新メッセージを取得
+  const getLastMessage = (applicant: Applicant) => {
+    const validMessages: Message[] = applicant.messages.filter(
+      (message) => !message.deleted_at
+    );
+    if (validMessages.length === 0) {
+      return "";
+    }
+
+    let message = "";
+    const lastMessage: Message = validMessages[validMessages.length - 1];
+    if (lastMessage.sender_type === 2) {
+      message += "You：";
+    }
+    if (lastMessage.content_type === "text") {
+      message += lastMessage.message;
+    } else {
+      message += "ファイルを送信しました";
+    }
+
+    return message;
+  };
+
   // メッセージ詳細ページを表示
   if (selectedApplicant) {
     return (
@@ -184,7 +207,7 @@ export default function MessageList() {
                     {applicant.office_name}
                   </h3>
                   <p className="text-xs text-gray-500 truncate">
-                    {applicant.messages[0] && applicant.messages[0].message}
+                    {getLastMessage(applicant)}
                   </p>
                 </div>
 
