@@ -11,12 +11,12 @@ import {
 } from "@/services/messageService";
 import { useGlobalContext } from "@/hooks/useGlobalContext";
 import { ChatBubbleLeftEllipsisIcon } from "@heroicons/react/24/outline";
+import toast from "react-hot-toast";
 
 export default function MessageList() {
   const { liff } = useGlobalContext();
   const [applicants, setApplicants] = useState<Applicant[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
   const [selectedApplicant, setSelectedApplicant] = useState<Applicant | null>(
     null
   );
@@ -28,7 +28,6 @@ export default function MessageList() {
     const loadMessages = async () => {
       try {
         setLoading(true);
-        setError(null);
 
         let fetchedApplicants: Applicant[] = [];
 
@@ -40,7 +39,15 @@ export default function MessageList() {
         setApplicants(fetchedApplicants);
       } catch (err) {
         console.error("メッセージの読み込みに失敗:", err);
-        setError("メッセージの読み込みに失敗しました");
+        toast.error("メッセージの読み込みに失敗しました", {
+          style: {
+            border: "1px solid #ff0000",
+            padding: "12px 16px",
+            borderRadius: "10px",
+            fontSize: "14px",
+            fontWeight: "bold",
+          },
+        });
       } finally {
         setLoading(false);
       }
@@ -124,7 +131,15 @@ export default function MessageList() {
       return fetchedApplicant?.messages ?? [];
     } catch (err) {
       console.error("メッセージの送信に失敗:", err);
-      setError("メッセージの送信に失敗しました");
+      toast.error("メッセージの送信に失敗しました", {
+        style: {
+          border: "1px solid #ff0000",
+          padding: "12px 16px",
+          borderRadius: "10px",
+          fontSize: "14px",
+          fontWeight: "bold",
+        },
+      });
       return selectedApplicant?.messages ?? [];
     }
   };
@@ -149,7 +164,15 @@ export default function MessageList() {
       return fetchedApplicant?.messages ?? [];
     } catch (err) {
       console.error("メッセージの削除に失敗:", err);
-      setError("メッセージの削除に失敗しました");
+      toast.error("メッセージの削除に失敗しました", {
+        style: {
+          border: "1px solid #ff0000",
+          padding: "12px 16px",
+          borderRadius: "10px",
+          fontSize: "14px",
+          fontWeight: "bold",
+        },
+      });
       return selectedApplicant?.messages ?? [];
     }
   };
