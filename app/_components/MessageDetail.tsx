@@ -50,6 +50,11 @@ export default function MessageDetail({
 
   // メッセージ長押し
   const handleTouchStart = (message: Message) => {
+    // 自分のメッセージ以外は長押しを検知しない
+    if (message.sender_type === 1) {
+      return;
+    }
+
     // 長押しを検知（800ms）
     timerRef.current = setTimeout(() => {
       setSelectedMessage(message); // メニューを表示する
