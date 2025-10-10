@@ -5,7 +5,6 @@ import { Applicant, Message } from "@/types/message";
 import {
   ChevronLeftIcon,
   PaperAirplaneIcon,
-  TrashIcon,
 } from "@heroicons/react/24/outline";
 
 interface MessageDetailProps {
@@ -16,6 +15,7 @@ interface MessageDetailProps {
     applicantId: number,
     messageId: number
   ) => Promise<Message[]>;
+  highlightedMessageId?: number | null;
 }
 
 export default function MessageDetail({
@@ -23,12 +23,14 @@ export default function MessageDetail({
   onBack,
   onSendMessage,
   onRemoveMessage,
+  highlightedMessageId,
 }: MessageDetailProps) {
   const [messages, setMessages] = useState<Message[]>(applicant.messages);
   const [inputMessage, setInputMessage] = useState("");
   const [selectedMessage, setSelectedMessage] = useState<Message | null>(null);
   const [rows, setRows] = useState(1);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const highlightedMessageRef = useRef<HTMLDivElement>(null);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
 
   // メッセージ送信
@@ -74,9 +76,24 @@ export default function MessageDetail({
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({});
   };
+
+  // ハイライトされたメッセージまでスクロール
+  const scrollToHighlightedMessage = () => {
+    if (highlightedMessageRef.current) {
+      highlightedMessageRef.current.scrollIntoView({
+        block: "start",
+      });
+    }
+  };
+
+  // メッセージが更新された時は最下部にスクロール
   useEffect(() => {
-    scrollToBottom();
-  }, [messages]);
+    if (highlightedMessageId) {
+      scrollToHighlightedMessage();
+    } else {
+      scrollToBottom();
+    }
+  }, [messages, highlightedMessageId]);
 
   const formatTime = (date: Date) => {
     return date.toLocaleTimeString("ja-JP", {
@@ -105,7 +122,7 @@ export default function MessageDetail({
   return (
     <div className="max-w-md mx-auto flex flex-col h-screen relative">
       {/* ヘッダー */}
-      <div className="pt-3 pb-2 px-4 border-b border-blue-400 flex items-center space-x-3 justify-start">
+      <div className="py-3 px-4 border-b border-blue-400 flex items-center space-x-3 justify-start">
         <button
           onClick={onBack}
           className="p-1 hover:bg-blue-400/20 rounded-full cursor-pointer"
@@ -165,6 +182,11 @@ export default function MessageDetail({
                 className={`flex gap-1 items-end justify-end ${
                   message.sender_type === 1 && "flex-row-reverse"
                 }`}
+                ref={
+                  message.id === highlightedMessageId
+                    ? highlightedMessageRef
+                    : null
+                }
               >
                 <div className="flex flex-col gap-0.5 text-xs text-gray-500">
                   <p>
