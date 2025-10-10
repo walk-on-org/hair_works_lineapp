@@ -6,6 +6,15 @@ export interface ApplicantMessageResponse {
   };
 }
 
+export interface LoginResponse {
+  status: number;
+  data: {
+    result: number;
+    access_token: string;
+    message?: string;
+  };
+}
+
 export interface SendMessageResponse {
   status: number;
   data: {

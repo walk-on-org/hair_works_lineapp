@@ -1,6 +1,7 @@
 import {
   Applicant,
   ApplicantMessageResponse,
+  LoginResponse,
   SendMessageResponse,
 } from "@/types/message";
 
@@ -28,6 +29,43 @@ async function apiCall<T>(
   }
 
   return response.json();
+}
+
+// ログインAPI（初回トークンあり）
+export async function loginVerifyToken(
+  token: string,
+  lineUserId: string
+): Promise<LoginResponse> {
+  try {
+    const result = await apiCall<LoginResponse>(
+      "/api/v1/auth/login_line_app_verify_token",
+      {
+        method: "POST",
+        body: JSON.stringify({ token, line_user_id: lineUserId }),
+      }
+    );
+    return result;
+  } catch (error) {
+    console.error("ログインに失敗しました:", error);
+    throw error;
+  }
+}
+
+// ログインAPI（2回目以降、トークンなし）
+export async function login(lineUserId: string): Promise<LoginResponse> {
+  try {
+    const result = await apiCall<LoginResponse>(
+      "/api/v1/auth/login_line_app_user_id",
+      {
+        method: "POST",
+        body: JSON.stringify({ line_user_id: lineUserId }),
+      }
+    );
+    return result;
+  } catch (error) {
+    console.error("ログインに失敗しました:", error);
+    throw error;
+  }
 }
 
 // LIFFトークンを使用したAPI呼び出し
@@ -133,16 +171,3 @@ export async function alreadyReadMessage(
     throw error;
   }
 }
-
-// 未読メッセージ数取得API
-/*
-export async function fetchUnreadCount(): Promise<number> {
-  try {
-    const result = await apiCall<{ count: number }>("/messages/unread-count");
-    return result.count;
-  } catch (error) {
-    console.error("未読メッセージ数の取得に失敗しました:", error);
-    throw error;
-  }
-}
-*/

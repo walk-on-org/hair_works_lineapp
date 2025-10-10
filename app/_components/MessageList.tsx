@@ -9,15 +9,17 @@ import {
   removeMessage,
   alreadyReadMessage,
 } from "@/services/messageService";
-import { useGlobalContext } from "@/hooks/useGlobalContext";
 import {
   ChatBubbleLeftEllipsisIcon,
   MagnifyingGlassIcon,
 } from "@heroicons/react/24/outline";
 import toast from "react-hot-toast";
 
-export default function MessageList() {
-  const { liff } = useGlobalContext();
+interface MessageListProps {
+  accessToken: string;
+}
+
+export default function MessageList({ accessToken }: MessageListProps) {
   const [applicants, setApplicants] = useState<Applicant[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedApplicant, setSelectedApplicant] = useState<Applicant | null>(
@@ -30,8 +32,6 @@ export default function MessageList() {
     number | null
   >(null);
 
-  const accessToken = "4UukdhjBF9tk46rKaDG5OgES6ONG6ur6t5Q0ZUc7RgLMY7Aj";
-
   // メッセージ一覧を取得
   useEffect(() => {
     const loadMessages = async () => {
@@ -40,8 +40,8 @@ export default function MessageList() {
 
         let fetchedApplicants: Applicant[] = [];
 
-        // LIFFが利用可能でログインしている場合は認証付きでAPI呼び出し
-        if (liff && liff.isLoggedIn()) {
+        // 認証付きでAPI呼び出し
+        if (accessToken) {
           fetchedApplicants = await fetchApplicantMessageList(accessToken);
         }
 
@@ -63,7 +63,7 @@ export default function MessageList() {
     };
 
     loadMessages();
-  }, [liff]);
+  }, [accessToken]);
 
   // 日時フォーマット
   const formatDateTime = (date: Date) => {
@@ -365,7 +365,7 @@ export default function MessageList() {
     <div className="max-w-md mx-auto flex flex-col h-screen">
       {/* ヘッダー */}
       <div className="px-6 py-3 border-b border-blue-400">
-        <h1 className="text-lg font-bold text-center">すべての宛先</h1>
+        <h1 className="text-lg font-bold text-center">すべての応募先サロン</h1>
       </div>
 
       {/* 検索ボックス */}
