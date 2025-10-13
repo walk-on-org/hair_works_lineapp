@@ -280,8 +280,9 @@ export default function MessageDetail({
               >
                 <div className="flex flex-col gap-0.5 text-xs text-gray-500">
                   <p>
-                    {message.sender_type === 1 &&
+                    {message.sender_type === 2 &&
                       message.already_read === 1 &&
+                      !message.deleted_at &&
                       "既読"}
                   </p>
                   <p>{formatTime(new Date(message.created_at))}</p>
