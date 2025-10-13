@@ -40,6 +40,9 @@ export default function MessageList({ accessToken }: MessageListProps) {
     const loadMessages = async () => {
       try {
         setLoading(true);
+        if (accessToken === "") {
+          return;
+        }
 
         let fetchedApplicants: Applicant[] = [];
 
@@ -49,6 +52,7 @@ export default function MessageList({ accessToken }: MessageListProps) {
         }
 
         setApplicants(fetchedApplicants);
+        setLoading(false);
       } catch (err) {
         console.error("メッセージの読み込みに失敗:", err);
         toast.error("メッセージの読み込みに失敗しました", {
@@ -60,8 +64,6 @@ export default function MessageList({ accessToken }: MessageListProps) {
             fontWeight: "bold",
           },
         });
-      } finally {
-        setLoading(false);
       }
     };
 

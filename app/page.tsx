@@ -66,7 +66,9 @@ export default function Home() {
     <main className="min-h-screen bg-white text-gray-900">
       {liffError ? (
         <div className="flex items-center justify-center min-h-screen">
-          <p className="text-red-600">LIFF初期化に失敗しました</p>
+          <p className="text-red-600">
+            初期化に失敗しました。再度読み込みをお試しください。
+          </p>
         </div>
       ) : (
         <MessageList accessToken={accessToken ?? ""} />
