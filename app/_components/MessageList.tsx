@@ -466,7 +466,7 @@ export default function MessageList({ accessToken }: MessageListProps) {
       {/* 空状態 */}
       {!loading && applicants.length === 0 && (
         <div className="text-center py-8 flex-1">
-          <p className="text-gray-500">メッセージがありません</p>
+          <p className="text-gray-500">応募履歴がありません</p>
         </div>
       )}
 

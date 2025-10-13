@@ -355,6 +355,11 @@ export default function MessageDetail({
             </div>
           );
         })}
+        {messages.length === 0 && (
+          <div className="text-gray-500 h-full flex items-center justify-center">
+            <p className="text-sm">メッセージがありません</p>
+          </div>
+        )}
         <div ref={messagesEndRef} />
       </div>
 
