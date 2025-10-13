@@ -5,7 +5,9 @@ import { Applicant, Message } from "@/types/message";
 import {
   ChevronLeftIcon,
   PaperAirplaneIcon,
+  DocumentIcon,
 } from "@heroicons/react/24/outline";
+import toast from "react-hot-toast";
 
 interface MessageDetailProps {
   applicant: Applicant;
@@ -65,6 +67,41 @@ export default function MessageDetail({
   const handleTouchEnd = () => {
     // 長押し解除（タップなど）
     if (timerRef.current) clearTimeout(timerRef.current);
+  };
+
+  // ファイルダウンロード
+  const handleDownloadFile = (attachment: string) => {
+    fetch(process.env.NEXT_PUBLIC_API_BASE_URL + attachment, {
+      headers: {
+        responseType: "blob",
+      },
+    }).then((response) => {
+      response
+        .blob()
+        .then((blob) => {
+          const url = window.URL.createObjectURL(blob);
+          const a = document.createElement("a");
+          a.href = url;
+          a.download = attachment.split("/").pop() ?? "";
+          // aタグ要素を画面に一時的に追加する
+          document.body.appendChild(a);
+          a.click();
+          // aタグ要素を画面から削除する
+          document.body.removeChild(a);
+        })
+        .catch((error) => {
+          console.error("ファイルのダウンロードに失敗しました:", error);
+          toast.error("ファイルのダウンロードに失敗しました", {
+            style: {
+              border: "1px solid #ff0000",
+              padding: "12px 16px",
+              borderRadius: "10px",
+              fontSize: "14px",
+              fontWeight: "bold",
+            },
+          });
+        });
+    });
   };
 
   // メッセージ入力エリアの行数を設定
@@ -204,7 +241,7 @@ export default function MessageDetail({
                     </p>
                   </div>
                 )}
-                {!message.deleted_at && (
+                {!message.deleted_at && message.content_type === "text" && (
                   <>
                     <div
                       className={`max-w-xs lg:max-w-md px-4 py-2 rounded-lg text-gray-900 ${
@@ -223,6 +260,43 @@ export default function MessageDetail({
                     </div>
                   </>
                 )}
+                {!message.deleted_at && message.content_type === "image" && (
+                  <div
+                    className="max-w-xs lg:max-w-md"
+                    onTouchStart={() => handleTouchStart(message)}
+                    onTouchEnd={handleTouchEnd}
+                    onMouseDown={() => handleTouchStart(message)} // PC対応
+                    onMouseUp={handleTouchEnd}
+                  >
+                    <img
+                      src={
+                        process.env.NEXT_PUBLIC_API_BASE_URL +
+                        message.attachment
+                      }
+                      alt="添付ファイル"
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                )}
+                {!message.deleted_at && message.content_type === "file" && (
+                  <div
+                    className={`max-w-xs lg:max-w-md px-4 py-2 rounded-lg text-gray-900 flex items-center gap-2 ${
+                      message.sender_type === 1
+                        ? "bg-gray-100"
+                        : "bg-green-400/50"
+                    }`}
+                    onTouchStart={() => handleTouchStart(message)}
+                    onTouchEnd={handleTouchEnd}
+                    onMouseDown={() => handleTouchStart(message)} // PC対応
+                    onMouseUp={handleTouchEnd}
+                    onClick={() => handleDownloadFile(message.attachment)}
+                  >
+                    <DocumentIcon className="w-5 h-5" />
+                    <p className="text-xs whitespace-pre-wrap font-bold">
+                      {message.attachment.split("/").pop()}
+                    </p>
+                  </div>
+                )}
               </div>
             </div>
           );
@@ -236,8 +310,8 @@ export default function MessageDetail({
           <textarea
             value={inputMessage}
             onChange={(e) => setInputMessage(e.target.value)}
-            placeholder="メッセージを入力..."
-            className="flex-1 border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            placeholder="サロンへのメッセージを入力..."
+            className="flex-1 border text-sm border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
             rows={rows}
             maxLength={500}
           />
