@@ -32,6 +32,8 @@ export default function MessageList({ accessToken }: MessageListProps) {
   const [highlightedMessageId, setHighlightedMessageId] = useState<
     number | null
   >(null);
+  const [isExiting, setIsExiting] = useState(false);
+  const [isEntering, setIsEntering] = useState(false);
 
   // メッセージ一覧を取得
   useEffect(() => {
@@ -103,28 +105,46 @@ export default function MessageList({ accessToken }: MessageListProps) {
   // 宛先クリック
   const handleMessageClick = async (applicant: Applicant) => {
     try {
-      // 選択した宛先を設定
-      setSelectedApplicant(applicant);
-      // 検索でヒットしたメッセージIDを取得
-      const messageId = getMatchedMessageId(applicant, confirmedQuery);
-      setHighlightedMessageId(messageId);
-      // 既読処理
-      const fetchedApplicants: Applicant[] = await alreadyReadMessage(
-        applicant.id,
-        accessToken
-      );
-      setApplicants(fetchedApplicants);
+      // アニメーション開始
+      setIsExiting(true);
+
+      // アニメーション完了を待つ
+      setTimeout(async () => {
+        // 選択した宛先を設定
+        setSelectedApplicant(applicant);
+        // 検索でヒットしたメッセージIDを取得
+        const messageId = getMatchedMessageId(applicant, confirmedQuery);
+        setHighlightedMessageId(messageId);
+        // 既読処理
+        const fetchedApplicants: Applicant[] = await alreadyReadMessage(
+          applicant.id,
+          accessToken
+        );
+        setApplicants(fetchedApplicants);
+        // アニメーション状態をリセット
+        setIsExiting(false);
+      }, 300); // アニメーション時間と一致
     } catch (err) {
       console.error("メッセージの既読に失敗:", err);
+      setIsExiting(false);
     }
   };
 
   // 宛先一覧に戻る
   const handleBackToList = () => {
-    // 選択した宛先を解除
-    setSelectedApplicant(null);
-    // ハイライトをリセット
-    setHighlightedMessageId(null);
+    // アニメーション開始
+    setIsEntering(true);
+
+    // アニメーション完了を待つ
+    setTimeout(() => {
+      // 選択した宛先を解除
+      setSelectedApplicant(null);
+      // ハイライトをリセット
+      setHighlightedMessageId(null);
+
+      // アニメーション状態をリセット
+      setIsEntering(false);
+    }, 300); // アニメーション時間と一致
   };
 
   // メッセージ送信
@@ -368,12 +388,18 @@ export default function MessageList({ accessToken }: MessageListProps) {
         onSendMessage={handleSendMessage}
         onRemoveMessage={handleRemoveMessage}
         highlightedMessageId={highlightedMessageId}
+        isListExiting={isExiting}
+        isListEntering={isEntering}
       />
     );
   }
 
   return (
-    <div className="max-w-md mx-auto flex flex-col h-screen">
+    <div
+      className={`max-w-md mx-auto flex flex-col h-screen transition-all duration-300 ${
+        isExiting && "animate-slide-out-left"
+      }`}
+    >
       {/* ヘッダー */}
       <div className="px-6 py-3 border-b border-blue-green">
         <h1 className="text-lg font-bold text-center">すべての応募先サロン</h1>

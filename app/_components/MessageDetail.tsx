@@ -25,6 +25,8 @@ interface MessageDetailProps {
     messageId: number
   ) => Promise<Message[]>;
   highlightedMessageId?: number | null;
+  isListExiting?: boolean;
+  isListEntering?: boolean;
 }
 
 export default function MessageDetail({
@@ -33,6 +35,8 @@ export default function MessageDetail({
   onSendMessage,
   onRemoveMessage,
   highlightedMessageId,
+  isListExiting = false,
+  isListEntering = false,
 }: MessageDetailProps) {
   const [messages, setMessages] = useState<Message[]>(applicant.messages);
   const [inputMessage, setInputMessage] = useState("");
@@ -210,7 +214,11 @@ export default function MessageDetail({
   };
 
   return (
-    <div className="max-w-md mx-auto flex flex-col h-screen relative">
+    <div
+      className={`max-w-md mx-auto flex flex-col h-screen transition-all duration-300  ${
+        isListEntering && "animate-slide-out-right"
+      }`}
+    >
       {/* ヘッダー */}
       <div className="py-3 px-4 border-b border-blue-green flex items-center space-x-3 justify-start">
         <button
