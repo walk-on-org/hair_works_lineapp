@@ -6,13 +6,20 @@ import {
   ChevronLeftIcon,
   PaperAirplaneIcon,
   DocumentIcon,
+  PhotoIcon,
+  ChevronRightIcon,
 } from "@heroicons/react/24/outline";
 import toast from "react-hot-toast";
 
 interface MessageDetailProps {
   applicant: Applicant;
   onBack: () => void;
-  onSendMessage: (applicantId: number, message: string) => Promise<Message[]>;
+  onSendMessage: (
+    applicantId: number,
+    message: string,
+    attachment: File | null,
+    contentType: string
+  ) => Promise<Message[]>;
   onRemoveMessage: (
     applicantId: number,
     messageId: number
@@ -34,11 +41,19 @@ export default function MessageDetail({
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const highlightedMessageRef = useRef<HTMLDivElement>(null);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
+  const [selectAttachment, setSelectAttachment] = useState<boolean>(false);
+  const imageFileRef = useRef<HTMLInputElement>(null);
+  const fileRef = useRef<HTMLInputElement>(null);
 
   // メッセージ送信
   const handleSendMessage = async () => {
     if (inputMessage.trim()) {
-      const newMessages = await onSendMessage(applicant.id, inputMessage);
+      const newMessages = await onSendMessage(
+        applicant.id,
+        inputMessage,
+        null,
+        "text"
+      );
       setMessages(newMessages);
       scrollToBottom();
       setInputMessage("");
@@ -154,6 +169,44 @@ export default function MessageDetail({
         day: "numeric",
       });
     }
+  };
+
+  // ファイルメッセージ送信
+  const handleSendFileUpload = async (
+    e: React.ChangeEvent<HTMLInputElement>,
+    contentType: string
+  ) => {
+    const file = e.target.files?.[0];
+    if (!file) {
+      return;
+    }
+    if (file.size > 3 * 1024 * 1024) {
+      toast.error(
+        "ファイルの上限サイズ3MBを超えているため、送信できません。上限サイズを超えている場合はメールで送信してください。",
+        {
+          style: {
+            border: "1px solid #ff0000",
+            padding: "12px 16px",
+            borderRadius: "10px",
+            fontSize: "14px",
+            fontWeight: "bold",
+          },
+        }
+      );
+      return;
+    }
+
+    const newMessages = await onSendMessage(
+      applicant.id,
+      "",
+      file,
+      contentType
+    );
+    setMessages(newMessages);
+    scrollToBottom();
+    setSelectAttachment(false);
+    imageFileRef.current!.value = "";
+    fileRef.current!.value = "";
   };
 
   return (
@@ -274,7 +327,7 @@ export default function MessageDetail({
                         message.attachment
                       }
                       alt="添付ファイル"
-                      className="w-full h-full object-cover"
+                      className="w-full h-full object-cover rounded-lg"
                     />
                   </div>
                 )}
@@ -305,16 +358,60 @@ export default function MessageDetail({
       </div>
 
       {/* メッセージ入力エリア */}
-      <div className="border-t border-gray-200 p-4">
+      <div className="border-t border-gray-200 px-3 py-2">
         <div className="flex space-x-2 items-end">
+          {/* 添付ファイル */}
+          {!selectAttachment ? (
+            <button
+              className="p-2 aspect-square"
+              onClick={() => setSelectAttachment(!selectAttachment)}
+            >
+              <ChevronRightIcon className="w-5 h-5" />
+            </button>
+          ) : (
+            <>
+              <button
+                className="p-2 aspect-square"
+                onClick={() => imageFileRef.current?.click()}
+              >
+                <PhotoIcon className="w-5 h-5" />
+              </button>
+              <button
+                className="p-2 aspect-square"
+                onClick={() => fileRef.current?.click()}
+              >
+                <DocumentIcon className="w-5 h-5" />
+              </button>
+            </>
+          )}
+          {/* 画像ファイル選択 */}
+          <input
+            type="file"
+            className="hidden"
+            accept="image/*"
+            capture="environment"
+            ref={imageFileRef}
+            onChange={(e) => handleSendFileUpload(e, "image")}
+          />
+          {/* 書類ファイル選択 */}
+          <input
+            type="file"
+            className="hidden"
+            accept=".doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt,.pdf"
+            ref={fileRef}
+            onChange={(e) => handleSendFileUpload(e, "file")}
+          />
+          {/* メッセージ */}
           <textarea
             value={inputMessage}
+            onFocus={() => setSelectAttachment(false)}
             onChange={(e) => setInputMessage(e.target.value)}
             placeholder="サロンへのメッセージを入力..."
             className="flex-1 border text-sm border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-1 focus:ring-blue-green"
             rows={rows}
             maxLength={500}
           />
+          {/* 送信ボタン */}
           <button
             onClick={handleSendMessage}
             disabled={!inputMessage.trim()}

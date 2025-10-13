@@ -92,8 +92,6 @@ export async function fetchApplicantMessageList(
 export async function sendMessage(
   applicantId: number,
   message: string,
-  attachment: File | null,
-  contentType: string,
   accessToken: string
 ): Promise<Applicant[]> {
   try {
@@ -104,8 +102,8 @@ export async function sendMessage(
         body: JSON.stringify({
           applicantid: applicantId,
           message: message,
-          attachment: attachment,
-          contenttype: contentType,
+          attachment: "",
+          contenttype: "text",
         }),
         headers: {
           Authorization: `Bearer ${accessToken}`,
@@ -116,6 +114,44 @@ export async function sendMessage(
     return result.data.applicants;
   } catch (error) {
     console.error("メッセージの送信に失敗しました:", error);
+    throw error;
+  }
+}
+
+// ファイルメッセージ送信API
+export async function sendFileMessage(
+  applicantId: number,
+  attachment: File,
+  contentType: string,
+  accessToken: string
+): Promise<Applicant[]> {
+  try {
+    const formData = new FormData();
+    formData.append("applicantid", applicantId.toString());
+    formData.append("message", "");
+    formData.append("attachment", attachment);
+    formData.append("contenttype", contentType);
+
+    // FormDataを使用する場合はapiCallを使わず直接fetchを呼び出す
+    // （Content-Typeはブラウザが自動的にboundaryを含めて設定する必要があるため）
+    const url = `${API_BASE_URL}/api/v1/applicants/messages/send`;
+    const response = await fetch(url, {
+      method: "POST",
+      body: formData,
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        // Content-Typeは設定しない（ブラウザが自動的に設定）
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(`API Error: ${response.status} ${response.statusText}`);
+    }
+
+    const result: SendMessageResponse = await response.json();
+    return result.data.applicants;
+  } catch (error) {
+    console.error("ファイルの送信に失敗しました:", error);
     throw error;
   }
 }

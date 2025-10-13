@@ -6,6 +6,7 @@ import { Applicant, Message } from "@/types/message";
 import {
   fetchApplicantMessageList,
   sendMessage,
+  sendFileMessage,
   removeMessage,
   alreadyReadMessage,
 } from "@/services/messageService";
@@ -129,17 +130,27 @@ export default function MessageList({ accessToken }: MessageListProps) {
   // メッセージ送信
   const handleSendMessage = async (
     applicantId: number,
-    message: string
+    message: string,
+    attachment: File | null,
+    contentType: string
   ): Promise<Message[]> => {
     try {
       // 送信API
-      const fetchedApplicants: Applicant[] = await sendMessage(
-        applicantId,
-        message,
-        null,
-        "text",
-        accessToken
-      );
+      let fetchedApplicants: Applicant[] = [];
+      if (contentType === "text") {
+        fetchedApplicants = await sendMessage(
+          applicantId,
+          message,
+          accessToken
+        );
+      } else if (attachment) {
+        fetchedApplicants = await sendFileMessage(
+          applicantId,
+          attachment,
+          contentType,
+          accessToken
+        );
+      }
       // 送信後の一覧を更新
       setApplicants(fetchedApplicants);
       // 送信後のメッセージ履歴
