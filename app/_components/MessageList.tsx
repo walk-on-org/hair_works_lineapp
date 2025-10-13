@@ -364,7 +364,7 @@ export default function MessageList({ accessToken }: MessageListProps) {
   return (
     <div className="max-w-md mx-auto flex flex-col h-screen">
       {/* ヘッダー */}
-      <div className="px-6 py-3 border-b border-blue-400">
+      <div className="px-6 py-3 border-b border-blue-green">
         <h1 className="text-lg font-bold text-center">すべての応募先サロン</h1>
       </div>
 
@@ -472,16 +472,16 @@ export default function MessageList({ accessToken }: MessageListProps) {
             className="flex flex-col items-center gap-1"
             onClick={handleBackToList}
           >
-            <div className="rounded-full bg-blue-400/20 px-4 py-2">
-              <ChatBubbleLeftEllipsisIcon className="w-6 h-6 text-blue-600" />
+            <div className="rounded-full bg-thin-green/20 px-4 py-2">
+              <ChatBubbleLeftEllipsisIcon className="w-6 h-6 text-blue-green" />
             </div>
-            <p className="text-xs font-medium text-blue-600">宛先</p>
+            <p className="text-xs font-bold text-blue-green">宛先</p>
           </div>
           <div className="flex flex-col items-center gap-1">
-            <div className="rounded-full bg-blue-400/20 px-4 py-2">
-              <ChatBubbleLeftEllipsisIcon className="w-6 h-6 text-blue-600" />
+            <div className="rounded-full bg-thin-green/20 px-4 py-2">
+              <ChatBubbleLeftEllipsisIcon className="w-6 h-6 text-blue-green" />
             </div>
-            <p className="text-xs font-medium text-blue-600">TODO</p>
+            <p className="text-xs font-bold text-blue-green">TODO</p>
           </div>
         </div>
       </div>

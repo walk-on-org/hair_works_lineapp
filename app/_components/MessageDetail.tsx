@@ -159,7 +159,7 @@ export default function MessageDetail({
   return (
     <div className="max-w-md mx-auto flex flex-col h-screen relative">
       {/* ヘッダー */}
-      <div className="py-3 px-4 border-b border-blue-400 flex items-center space-x-3 justify-start">
+      <div className="py-3 px-4 border-b border-blue-green flex items-center space-x-3 justify-start">
         <button
           onClick={onBack}
           className="p-1 hover:bg-blue-400/20 rounded-full cursor-pointer"
@@ -311,14 +311,14 @@ export default function MessageDetail({
             value={inputMessage}
             onChange={(e) => setInputMessage(e.target.value)}
             placeholder="サロンへのメッセージを入力..."
-            className="flex-1 border text-sm border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="flex-1 border text-sm border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-1 focus:ring-blue-green"
             rows={rows}
             maxLength={500}
           />
           <button
             onClick={handleSendMessage}
             disabled={!inputMessage.trim()}
-            className="bg-blue-600 text-white p-2 aspect-square rounded-lg hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed"
+            className="bg-blue-green text-white p-2 aspect-square rounded-lg disabled:bg-gray-300 disabled:cursor-not-allowed"
           >
             <PaperAirplaneIcon className="w-5 h-5" />
           </button>
@@ -336,7 +336,7 @@ export default function MessageDetail({
             </p>
             <div className="flex gap-2 mt-4 justify-around">
               <button
-                className="bg-blue-600 text-white p-2 rounded-lg cursor-pointer w-28"
+                className="bg-blue-green text-white p-2 rounded-lg cursor-pointer w-28 font-bold"
                 onClick={() => handleRemoveMessage(selectedMessage.id)}
               >
                 削除
