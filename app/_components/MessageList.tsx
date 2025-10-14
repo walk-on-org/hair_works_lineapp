@@ -13,6 +13,7 @@ import {
 import {
   ChatBubbleLeftEllipsisIcon,
   MagnifyingGlassIcon,
+  ArrowPathIcon,
 } from "@heroicons/react/24/outline";
 import toast from "react-hot-toast";
 
@@ -36,39 +37,45 @@ export default function MessageList({ accessToken }: MessageListProps) {
   const [isEntering, setIsEntering] = useState(false);
 
   // メッセージ一覧を取得
-  useEffect(() => {
-    const loadMessages = async () => {
-      try {
-        setLoading(true);
-        if (accessToken === "") {
-          return;
-        }
-
-        let fetchedApplicants: Applicant[] = [];
-
-        // 認証付きでAPI呼び出し
-        if (accessToken) {
-          fetchedApplicants = await fetchApplicantMessageList(accessToken);
-        }
-
-        setApplicants(fetchedApplicants);
-        setLoading(false);
-      } catch (err) {
-        console.error("メッセージの読み込みに失敗:", err);
-        toast.error("メッセージの読み込みに失敗しました", {
-          style: {
-            border: "1px solid #ff0000",
-            padding: "12px 16px",
-            borderRadius: "10px",
-            fontSize: "14px",
-            fontWeight: "bold",
-          },
-        });
+  const loadMessages = async (accessToken: string) => {
+    try {
+      setLoading(true);
+      if (accessToken === "") {
+        return;
       }
-    };
 
-    loadMessages();
+      let fetchedApplicants: Applicant[] = [];
+
+      // 認証付きでAPI呼び出し
+      if (accessToken) {
+        fetchedApplicants = await fetchApplicantMessageList(accessToken);
+      }
+
+      setApplicants(fetchedApplicants);
+      setLoading(false);
+    } catch (err) {
+      console.error("メッセージの読み込みに失敗:", err);
+      toast.error("メッセージの読み込みに失敗しました", {
+        style: {
+          border: "1px solid #ff0000",
+          padding: "12px 16px",
+          borderRadius: "10px",
+          fontSize: "14px",
+          fontWeight: "bold",
+        },
+      });
+    }
+  };
+
+  // メッセージ一覧を取得
+  useEffect(() => {
+    loadMessages(accessToken);
   }, [accessToken]);
+
+  // メッセージ一覧を更新
+  const handleRefresh = () => {
+    loadMessages(accessToken);
+  };
 
   // 日時フォーマット
   const formatDateTime = (date: Date) => {
@@ -406,8 +413,14 @@ export default function MessageList({ accessToken }: MessageListProps) {
       }`}
     >
       {/* ヘッダー */}
-      <div className="px-6 py-3 border-b border-blue-green">
+      <div className="px-6 py-3 border-b border-blue-green relative">
         <h1 className="text-lg font-bold text-center">すべての応募先サロン</h1>
+        <button
+          onClick={handleRefresh}
+          className="absolute right-6 top-1/2 -translate-y-1/2"
+        >
+          <ArrowPathIcon className="w-6 h-6" />
+        </button>
       </div>
 
       {/* 検索ボックス */}
