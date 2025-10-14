@@ -517,10 +517,15 @@ export default function MessageList({ accessToken }: MessageListProps) {
             <p className="text-xs font-bold text-blue-green">宛先</p>
           </div>
           <div className="flex flex-col items-center gap-1">
-            <div className="rounded-full bg-thin-green/20 px-4 py-2">
-              <ChatBubbleLeftEllipsisIcon className="w-6 h-6 text-blue-green" />
-            </div>
-            <p className="text-xs font-bold text-blue-green">TODO</p>
+            <a
+              href={`${process.env.NEXT_PUBLIC_BASE_URL}`}
+              className="rounded-full px-4 py-2 cursor-pointer"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <MagnifyingGlassIcon className="h-6 w-6 text-blue-green" />
+            </a>
+            <p className="text-xs font-bold text-blue-green">求人を見る</p>
           </div>
         </div>
       </div>

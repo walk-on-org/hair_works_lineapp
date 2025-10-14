@@ -8,6 +8,7 @@ import {
   DocumentIcon,
   PhotoIcon,
   ChevronRightIcon,
+  ArrowTopRightOnSquareIcon,
 } from "@heroicons/react/24/outline";
 import toast from "react-hot-toast";
 
@@ -227,7 +228,7 @@ export default function MessageDetail({
         >
           <ChevronLeftIcon className="w-6 h-6" />
         </button>
-        <div className="flex flex-col gap-1">
+        <div className="flex flex-col gap-1 flex-1">
           <div className="flex gap-1">
             {[
               applicant.job_category_name,
@@ -254,6 +255,14 @@ export default function MessageDetail({
             })}
           </p>
         </div>
+        <a
+          href={`${process.env.NEXT_PUBLIC_BASE_URL}/detail/${applicant.job_id}`}
+          className="p-1 cursor-pointer"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <ArrowTopRightOnSquareIcon className="w-6 h-6" />
+        </a>
       </div>
 
       {/* メッセージ履歴 */}
