@@ -5,9 +5,12 @@ import {
   SendMessageResponse,
 } from "@/types/message";
 
-// APIのベースURL（環境変数から取得）
+// APIのベースURL
+// クライアントサイドからはNext.jsのリライト機能を使用してCORSを回避
 const API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8080";
+  typeof window !== "undefined"
+    ? "" // クライアントサイド：相対パスでNext.jsのリライトを利用
+    : process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8080"; // サーバーサイド：直接APIを呼び出す
 
 // API呼び出し用のヘルパー関数
 async function apiCall<T>(
