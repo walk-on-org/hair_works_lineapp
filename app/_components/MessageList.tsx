@@ -408,7 +408,7 @@ export default function MessageList({ accessToken }: MessageListProps) {
 
   return (
     <div
-      className={`max-w-md mx-auto flex flex-col h-screen transition-all duration-300 ${
+      className={`max-w-md mx-auto flex flex-col h-dvh transition-all duration-300 ${
         isExiting && "animate-slide-out-left"
       }`}
     >
@@ -431,7 +431,7 @@ export default function MessageList({ accessToken }: MessageListProps) {
           </div>
           <input
             type="text"
-            className="block w-full pl-10 pr-3 py-2 border border-gray-300 text-sm rounded-lg leading-5 bg-white placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-2 focus:ring-blue-400 focus:border-transparent"
+            className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg leading-5 bg-white placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-2 focus:ring-blue-400 focus:border-transparent"
             placeholder="宛先やメッセージを検索..."
             value={searchQuery}
             onChange={(e) => {
@@ -521,28 +521,28 @@ export default function MessageList({ accessToken }: MessageListProps) {
         </div>
       )}
 
-      <div className="py-3 border-t border-gray-200">
+      <div className="py-2 border-t border-gray-200">
         <div className="flex justify-around">
           <div
             className="flex flex-col items-center gap-1"
-            onClick={handleBackToList}
+            onClick={handleRefresh}
           >
             <div className="rounded-full bg-thin-green/20 px-4 py-2">
               <ChatBubbleLeftEllipsisIcon className="w-6 h-6 text-blue-green" />
             </div>
             <p className="text-xs font-bold text-blue-green">宛先</p>
           </div>
-          <div className="flex flex-col items-center gap-1">
-            <a
-              href={`${process.env.NEXT_PUBLIC_BASE_URL}`}
-              className="rounded-full px-4 py-2 cursor-pointer"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <MagnifyingGlassIcon className="h-6 w-6 text-blue-green" />
-            </a>
+          <a
+            href={`${process.env.NEXT_PUBLIC_BASE_URL}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex flex-col items-center gap-1"
+          >
+            <div className="rounded-full px-4 py-2">
+              <MagnifyingGlassIcon className="w-6 h-6 text-blue-green" />
+            </div>
             <p className="text-xs font-bold text-blue-green">求人を見る</p>
-          </div>
+          </a>
         </div>
       </div>
     </div>

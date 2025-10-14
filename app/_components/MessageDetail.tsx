@@ -216,7 +216,7 @@ export default function MessageDetail({
 
   return (
     <div
-      className={`max-w-md mx-auto flex flex-col h-screen transition-all duration-300  ${
+      className={`max-w-md mx-auto flex flex-col h-dvh transition-all duration-300  ${
         isListEntering && "animate-slide-out-right"
       }`}
     >
@@ -430,7 +430,7 @@ export default function MessageDetail({
             onFocus={() => setSelectAttachment(false)}
             onChange={(e) => setInputMessage(e.target.value)}
             placeholder="サロンへのメッセージを入力..."
-            className="flex-1 border text-sm border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-1 focus:ring-blue-green"
+            className="flex-1 border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-1 focus:ring-blue-green"
             rows={rows}
             maxLength={500}
           />

@@ -63,7 +63,7 @@ export default function Home() {
   }, [liff]);
 
   return (
-    <main className="min-h-screen bg-white text-gray-900">
+    <main className="h-dvh bg-white text-gray-900">
       {liffError ? (
         <div className="flex items-center justify-center min-h-screen">
           <p className="text-red-600">
