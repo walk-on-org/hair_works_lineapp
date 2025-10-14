@@ -92,6 +92,9 @@ export default function MessageList({ accessToken }: MessageListProps) {
         hour: "2-digit",
         minute: "2-digit",
       });
+    } else if (diffHours < 24) {
+      // 24時間未満は、時間を表示
+      return `${diffHours}時間前`;
     } else if (diffDays < 7) {
       // 7日前未満は、何日前かを表示
       return `${diffDays}日前`;
