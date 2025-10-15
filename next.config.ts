@@ -11,6 +11,9 @@ const nextConfig: NextConfig = {
       },
     ];
   },
+  images: {
+    domains: ["localhost", "staging.hair-work.jp", "hair-work.jp"],
+  },
 };
 
 export default nextConfig;

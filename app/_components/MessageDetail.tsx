@@ -11,6 +11,7 @@ import {
   ArrowTopRightOnSquareIcon,
 } from "@heroicons/react/24/outline";
 import toast from "react-hot-toast";
+import Image from "next/image";
 
 interface MessageDetailProps {
   applicant: Applicant;
@@ -26,7 +27,6 @@ interface MessageDetailProps {
     messageId: number
   ) => Promise<Message[]>;
   highlightedMessageId?: number | null;
-  isListExiting?: boolean;
   isListEntering?: boolean;
 }
 
@@ -36,7 +36,6 @@ export default function MessageDetail({
   onSendMessage,
   onRemoveMessage,
   highlightedMessageId,
-  isListExiting = false,
   isListEntering = false,
 }: MessageDetailProps) {
   const [messages, setMessages] = useState<Message[]>(applicant.messages);
@@ -339,11 +338,13 @@ export default function MessageDetail({
                     onMouseDown={() => handleTouchStart(message)} // PC対応
                     onMouseUp={handleTouchEnd}
                   >
-                    <img
+                    <Image
                       src={
                         process.env.NEXT_PUBLIC_API_BASE_URL +
                         message.attachment
                       }
+                      width={300}
+                      height={300}
                       alt="添付ファイル"
                       className="w-full h-full object-cover rounded-lg"
                     />

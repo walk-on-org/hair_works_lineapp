@@ -16,6 +16,7 @@ import {
   ArrowPathIcon,
 } from "@heroicons/react/24/outline";
 import toast from "react-hot-toast";
+import Image from "next/image";
 
 interface MessageListProps {
   accessToken: string;
@@ -400,7 +401,6 @@ export default function MessageList({ accessToken }: MessageListProps) {
         onSendMessage={handleSendMessage}
         onRemoveMessage={handleRemoveMessage}
         highlightedMessageId={highlightedMessageId}
-        isListExiting={isExiting}
         isListEntering={isEntering}
       />
     );
@@ -471,12 +471,14 @@ export default function MessageList({ accessToken }: MessageListProps) {
               <div className="flex items-center space-x-3">
                 {/* アバター */}
                 <div className="flex-shrink-0">
-                  <img
+                  <Image
                     src={
                       process.env.NEXT_PUBLIC_API_BASE_URL + applicant.image.url
                     }
                     alt={applicant.office_name}
                     className="w-16 h-16 rounded-full object-cover"
+                    width={64}
+                    height={64}
                   />
                 </div>
 
