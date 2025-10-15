@@ -70,7 +70,21 @@ export default function MessageList({ accessToken }: MessageListProps) {
 
   // メッセージ一覧を取得
   useEffect(() => {
+    if (accessToken === "") {
+      return;
+    }
     loadMessages(accessToken);
+
+    // 再度開いたらメッセージ一覧を更新
+    document.addEventListener("visibilitychange", () => {
+      if (document.visibilityState === "visible") {
+        loadMessages(accessToken);
+      }
+    });
+
+    return () => {
+      document.removeEventListener("visibilitychange", () => {});
+    };
   }, [accessToken]);
 
   // メッセージ一覧を更新
