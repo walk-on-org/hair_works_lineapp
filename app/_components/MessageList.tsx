@@ -22,9 +22,13 @@ import Image from "next/image";
 
 interface MessageListProps {
   accessToken: string;
+  onLogout: () => void;
 }
 
-export default function MessageList({ accessToken }: MessageListProps) {
+export default function MessageList({
+  accessToken,
+  onLogout,
+}: MessageListProps) {
   const [applicants, setApplicants] = useState<Applicant[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedApplicant, setSelectedApplicant] = useState<Applicant | null>(
@@ -600,7 +604,11 @@ export default function MessageList({ accessToken }: MessageListProps) {
       </div>
 
       {/* 設定メニュー */}
-      <SlideInMenu isOpen={isSettingsMenuOpen} onClose={handleCloseSettings} />
+      <SlideInMenu
+        isOpen={isSettingsMenuOpen}
+        onClose={handleCloseSettings}
+        onLogout={onLogout}
+      />
     </div>
   );
 }

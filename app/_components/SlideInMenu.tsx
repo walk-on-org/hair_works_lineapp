@@ -1,14 +1,22 @@
 "use client";
 
-import { ChevronRightIcon } from "@heroicons/react/24/outline";
+import {
+  ChevronRightIcon,
+  ArrowRightStartOnRectangleIcon,
+} from "@heroicons/react/24/outline";
 import Link from "next/link";
 
 interface SlideInMenuProps {
   isOpen: boolean;
   onClose: () => void;
+  onLogout: () => void;
 }
 
-export default function SlideInMenu({ isOpen, onClose }: SlideInMenuProps) {
+export default function SlideInMenu({
+  isOpen,
+  onClose,
+  onLogout,
+}: SlideInMenuProps) {
   const items = [
     {
       label: "利用規約",
@@ -18,6 +26,18 @@ export default function SlideInMenu({ isOpen, onClose }: SlideInMenuProps) {
     {
       label: "プライバシーポリシー",
       href: "/",
+      title: "",
+    },
+    {
+      label: "ログアウト",
+      href: "#",
+      onClick: onLogout,
+      icon: (
+        <ArrowRightStartOnRectangleIcon
+          className="w-4 h-4 text-red-400"
+          strokeWidth={2}
+        />
+      ),
       title: "",
     },
   ];
@@ -54,16 +74,28 @@ export default function SlideInMenu({ isOpen, onClose }: SlideInMenuProps) {
                       {item.title}
                     </h3>
                   )}
-                  <Link
-                    href={item.href}
-                    className="text-sm px-7 py-3 border-b border-gray-100 flex items-center justify-between"
-                  >
-                    {item.label}
-                    <ChevronRightIcon
-                      className="w-3 h-3 text-red-400"
-                      strokeWidth={3}
-                    />
-                  </Link>
+                  {item.href === "#" ? (
+                    <button
+                      onClick={item.onClick}
+                      className="text-sm px-7 py-3 border-b border-gray-100 flex items-center justify-between w-full"
+                    >
+                      <div className="flex items-center">
+                        {item.icon}
+                        <span className="ml-2">{item.label}</span>
+                      </div>
+                    </button>
+                  ) : (
+                    <Link
+                      href={item.href}
+                      className="text-sm px-7 py-3 border-b border-gray-100 flex items-center justify-between"
+                    >
+                      {item.label}
+                      <ChevronRightIcon
+                        className="w-3 h-3 text-red-400"
+                        strokeWidth={3}
+                      />
+                    </Link>
+                  )}
                 </div>
               ))}
             </div>

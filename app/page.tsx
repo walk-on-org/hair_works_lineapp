@@ -3,7 +3,11 @@
 import { useEffect, useState } from "react";
 import { useGlobalContext } from "@/hooks/useGlobalContext";
 import MessageList from "./_components/MessageList";
-import { loginVerifyToken, loginByUserId } from "@/services/messageService";
+import {
+  loginVerifyToken,
+  loginByUserId,
+  logout,
+} from "@/services/messageService";
 import { LoginResponse } from "@/types/message";
 import LoginScreen from "./_components/LoginScreen";
 
@@ -12,6 +16,7 @@ export default function Home() {
   const [isLoading, setIsLoading] = useState(true);
   const [accessToken, setAccessToken] = useState<string | null>(null);
   const [needLogin, setNeedLogin] = useState(false);
+  const [lineUserId, setLineUserId] = useState<string | null>(null);
 
   useEffect(() => {
     (async () => {
@@ -21,6 +26,7 @@ export default function Home() {
       if (liff?.isLoggedIn()) {
         try {
           const profile = await liff.getProfile();
+          setLineUserId(profile.userId);
           let res: LoginResponse;
           if (token) {
             // 初回ログイン
@@ -56,6 +62,19 @@ export default function Home() {
     setNeedLogin(false);
   };
 
+  const handleLogout = async () => {
+    try {
+      const res = await logout(lineUserId as string);
+      if (res.data.result === 1) {
+        setAccessToken("");
+        setNeedLogin(true);
+        setLineUserId(null);
+      }
+    } catch (error) {
+      console.error("ログアウトに失敗しました:", error);
+    }
+  };
+
   return (
     <main className="h-dvh bg-white text-gray-900">
       {isLoading ? (
@@ -72,7 +91,7 @@ export default function Home() {
       ) : needLogin ? (
         <LoginScreen onLoginSuccess={handleLoginSuccess} />
       ) : (
-        <MessageList accessToken={accessToken ?? ""} />
+        <MessageList accessToken={accessToken ?? ""} onLogout={handleLogout} />
       )}
     </main>
   );

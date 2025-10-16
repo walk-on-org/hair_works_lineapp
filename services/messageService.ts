@@ -2,6 +2,7 @@ import {
   Applicant,
   ApplicantMessageResponse,
   LoginResponse,
+  LogoutResponse,
   SendMessageResponse,
 } from "@/types/message";
 
@@ -90,6 +91,23 @@ export async function loginByUserId(
     return result;
   } catch (error) {
     console.error("ログインに失敗しました:", error);
+    throw error;
+  }
+}
+
+// ログアウトAPI
+export async function logout(lineUserId: string): Promise<LogoutResponse> {
+  try {
+    const result = await apiCall<LogoutResponse>(
+      "/api/v1/auth/logout_line_app",
+      {
+        method: "POST",
+        body: JSON.stringify({ line_user_id: lineUserId }),
+      }
+    );
+    return result;
+  } catch (error) {
+    console.error("ログアウトに失敗しました:", error);
     throw error;
   }
 }

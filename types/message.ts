@@ -15,6 +15,13 @@ export interface LoginResponse {
   };
 }
 
+export interface LogoutResponse {
+  status: number;
+  data: {
+    result: number;
+  };
+}
+
 export interface SendMessageResponse {
   status: number;
   data: {
