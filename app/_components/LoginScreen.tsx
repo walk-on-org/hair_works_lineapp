@@ -13,7 +13,7 @@ interface FormData {
 }
 
 interface LoginScreenProps {
-  onLoginSuccess: (accessToken: string) => void;
+  onLoginSuccess: (accessToken: string, lineUserId: string) => void;
 }
 
 export default function LoginScreen({ onLoginSuccess }: LoginScreenProps) {
@@ -39,7 +39,7 @@ export default function LoginScreen({ onLoginSuccess }: LoginScreenProps) {
       if (response.data && response.data.result === 0) {
         throw new Error(response.data.message ?? "ログインに失敗しました");
       } else if (response.data.access_token) {
-        onLoginSuccess(response.data.access_token);
+        onLoginSuccess(response.data.access_token, profile?.userId ?? "");
       } else {
         throw new Error("ログインに失敗しました");
       }

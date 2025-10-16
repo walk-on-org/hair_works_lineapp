@@ -57,9 +57,10 @@ export default function Home() {
     })();
   }, [liff]);
 
-  const handleLoginSuccess = (token: string) => {
+  const handleLoginSuccess = (token: string, lineUserId: string) => {
     setAccessToken(token);
     setNeedLogin(false);
+    setLineUserId(lineUserId);
   };
 
   const handleLogout = async () => {
