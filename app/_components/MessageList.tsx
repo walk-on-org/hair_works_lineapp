@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import MessageDetail from "./MessageDetail";
+import SlideInMenu from "./SlideInMenu";
 import { Applicant, Message } from "@/types/message";
 import {
   fetchApplicantMessageList,
@@ -11,9 +12,9 @@ import {
   alreadyReadMessage,
 } from "@/services/messageService";
 import {
-  ChatBubbleLeftEllipsisIcon,
   MagnifyingGlassIcon,
-  ArrowPathIcon,
+  Cog8ToothIcon,
+  HomeIcon,
 } from "@heroicons/react/24/outline";
 import toast from "react-hot-toast";
 import Image from "next/image";
@@ -36,6 +37,7 @@ export default function MessageList({ accessToken }: MessageListProps) {
   >(null);
   const [isExiting, setIsExiting] = useState(false);
   const [isEntering, setIsEntering] = useState(false);
+  const [isSettingsMenuOpen, setIsSettingsMenuOpen] = useState(false);
 
   // メッセージ一覧を取得
   const loadMessages = async (accessToken: string) => {
@@ -172,6 +174,16 @@ export default function MessageList({ accessToken }: MessageListProps) {
       // アニメーション状態をリセット
       setIsEntering(false);
     }, 300); // アニメーション時間と一致
+  };
+
+  // 設定メニューを開く
+  const handleOpenSettings = () => {
+    setIsSettingsMenuOpen(true);
+  };
+
+  // 設定メニューを閉じる
+  const handleCloseSettings = () => {
+    setIsSettingsMenuOpen(false);
   };
 
   // メッセージ送信
@@ -427,14 +439,8 @@ export default function MessageList({ accessToken }: MessageListProps) {
       }`}
     >
       {/* ヘッダー */}
-      <div className="px-6 py-3 border-b border-blue-green relative">
+      <div className="px-6 py-3 border-b border-blue-green">
         <h1 className="text-lg font-bold text-center">すべての応募先サロン</h1>
-        <button
-          onClick={handleRefresh}
-          className="absolute right-6 top-1/2 -translate-y-1/2"
-        >
-          <ArrowPathIcon className="w-6 h-6" />
-        </button>
       </div>
 
       {/* 検索ボックス */}
@@ -537,30 +543,46 @@ export default function MessageList({ accessToken }: MessageListProps) {
         </div>
       )}
 
-      <div className="py-2 border-t border-gray-200">
+      <div className="py-1 border-t border-gray-200 relative z-50 bg-white">
         <div className="flex justify-around">
           <div
-            className="flex flex-col items-center gap-1"
+            className="flex flex-col items-center gap-1 justify-center w-18"
             onClick={handleRefresh}
           >
-            <div className="rounded-full bg-thin-green/20 px-4 py-2">
-              <ChatBubbleLeftEllipsisIcon className="w-6 h-6 text-blue-green" />
+            <div className="rounded-full px-4 py-1">
+              <HomeIcon className="w-5 h-5 stroke-2" />
             </div>
-            <p className="text-xs font-bold text-blue-green">宛先</p>
+            <p className="text-xs font-bold">ホーム</p>
           </div>
           <a
             href={`${process.env.NEXT_PUBLIC_BASE_URL}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex flex-col items-center gap-1"
+            className="flex flex-col items-center gap-1 justify-center w-18"
           >
-            <div className="rounded-full px-4 py-2">
-              <MagnifyingGlassIcon className="w-6 h-6 text-blue-green" />
+            <div className="rounded-full px-4 py-1">
+              <MagnifyingGlassIcon className="w-5 h-5" />
             </div>
-            <p className="text-xs font-bold text-blue-green">求人を見る</p>
+            <p className="text-xs">求人を見る</p>
           </a>
+          <div
+            className="flex flex-col items-center gap-1 justify-center w-18 cursor-pointer"
+            onClick={handleOpenSettings}
+          >
+            <div className="rounded-full px-4 py-1">
+              <Cog8ToothIcon
+                className={`w-5 h-5 ${isSettingsMenuOpen && "stroke-2"}`}
+              />
+            </div>
+            <p className={`text-xs ${isSettingsMenuOpen && "font-bold"}`}>
+              その他/設定
+            </p>
+          </div>
         </div>
       </div>
+
+      {/* 設定メニュー */}
+      <SlideInMenu isOpen={isSettingsMenuOpen} onClose={handleCloseSettings} />
     </div>
   );
 }
