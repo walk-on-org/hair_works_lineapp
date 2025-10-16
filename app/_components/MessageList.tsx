@@ -15,6 +15,7 @@ import {
   MagnifyingGlassIcon,
   Cog8ToothIcon,
   HomeIcon,
+  XMarkIcon,
 } from "@heroicons/react/24/outline";
 import toast from "react-hot-toast";
 import Image from "next/image";
@@ -469,6 +470,15 @@ export default function MessageList({ accessToken }: MessageListProps) {
               setConfirmedQuery((e.target as HTMLInputElement).value);
             }}
           />
+          <div
+            className="absolute inset-y-0 right-0 pr-3 flex items-center cursor-pointer"
+            onClick={() => {
+              setSearchQuery("");
+              setConfirmedQuery("");
+            }}
+          >
+            <XMarkIcon className="h-5 w-5 text-gray-400" />
+          </div>
         </div>
       </div>
 
