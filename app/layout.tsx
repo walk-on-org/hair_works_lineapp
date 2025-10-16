@@ -14,8 +14,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "HAIR WORKS 応募者用アプリ",
-  description: "HAIR WORKS 応募者用アプリ",
+  title: "HAIR WORKS",
+  description: "HAIR WORKS",
 };
 
 export default function RootLayout({

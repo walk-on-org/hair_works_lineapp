@@ -54,8 +54,30 @@ export async function loginVerifyToken(
   }
 }
 
+// ログインAPI（初回、メールアドレスとパスワードでログイン）
+export async function loginByEmail(
+  email: string,
+  password: string
+): Promise<LoginResponse> {
+  try {
+    const result = await apiCall<LoginResponse>(
+      "/api/v1/auth/login_line_app_email",
+      {
+        method: "POST",
+        body: JSON.stringify({ email, password }),
+      }
+    );
+    return result;
+  } catch (error) {
+    console.error("ログインに失敗しました:", error);
+    throw error;
+  }
+}
+
 // ログインAPI（2回目以降、トークンなし）
-export async function login(lineUserId: string): Promise<LoginResponse> {
+export async function loginByUserId(
+  lineUserId: string
+): Promise<LoginResponse> {
   try {
     const result = await apiCall<LoginResponse>(
       "/api/v1/auth/login_line_app_user_id",

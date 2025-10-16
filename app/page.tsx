@@ -2,16 +2,16 @@
 
 import { useEffect, useState } from "react";
 import { useGlobalContext } from "@/hooks/useGlobalContext";
-import { Profile } from "@liff/get-profile";
 import MessageList from "./_components/MessageList";
-import toast from "react-hot-toast";
-import { loginVerifyToken, login } from "@/services/messageService";
+import { loginVerifyToken, loginByUserId } from "@/services/messageService";
 import { LoginResponse } from "@/types/message";
+import LoginScreen from "./_components/LoginScreen";
 
 export default function Home() {
   const { liff, liffError } = useGlobalContext();
-  const [profile, setProfile] = useState<Profile | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
   const [accessToken, setAccessToken] = useState<string | null>(null);
+  const [needLogin, setNeedLogin] = useState(false);
 
   useEffect(() => {
     (async () => {
@@ -21,40 +21,29 @@ export default function Home() {
       if (liff?.isLoggedIn()) {
         try {
           const profile = await liff.getProfile();
-          setProfile(profile);
           let res: LoginResponse;
           if (token) {
             // 初回ログイン
             res = await loginVerifyToken(token, profile.userId);
           } else {
             // ログイン済み
-            res = await login(profile.userId);
+            res = await loginByUserId(profile.userId);
           }
 
           if (res.data.result === 1) {
+            // メッセージ一覧表示
             setAccessToken(res.data.access_token);
+            setIsLoading(false);
           } else {
-            toast.error(res.data.message ?? "ログインに失敗しました", {
-              style: {
-                border: "1px solid #ff0000",
-                padding: "12px 16px",
-                borderRadius: "10px",
-                fontSize: "14px",
-                fontWeight: "bold",
-              },
-            });
+            // ログイン画面表示
+            setNeedLogin(true);
+            setIsLoading(false);
           }
         } catch (error) {
           console.error("ログインに失敗しました:", error);
-          toast.error("ログインに失敗しました", {
-            style: {
-              border: "1px solid #ff0000",
-              padding: "12px 16px",
-              borderRadius: "10px",
-              fontSize: "14px",
-              fontWeight: "bold",
-            },
-          });
+          // ログイン画面表示
+          setNeedLogin(true);
+          setIsLoading(false);
         }
       } else {
         liff?.login();
@@ -62,14 +51,26 @@ export default function Home() {
     })();
   }, [liff]);
 
+  const handleLoginSuccess = (token: string) => {
+    setAccessToken(token);
+    setNeedLogin(false);
+  };
+
   return (
     <main className="h-dvh bg-white text-gray-900">
-      {liffError ? (
+      {isLoading ? (
+        <div className="flex items-center justify-center min-h-screen">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-400"></div>
+          <span className="ml-2 text-gray-600">読み込み中...</span>
+        </div>
+      ) : liffError ? (
         <div className="flex items-center justify-center min-h-screen">
           <p className="text-red-600">
             初期化に失敗しました。再度読み込みをお試しください。
           </p>
         </div>
+      ) : needLogin ? (
+        <LoginScreen onLoginSuccess={handleLoginSuccess} />
       ) : (
         <MessageList accessToken={accessToken ?? ""} />
       )}
