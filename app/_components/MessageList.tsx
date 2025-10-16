@@ -446,7 +446,7 @@ export default function MessageList({
       }`}
     >
       {/* ヘッダー */}
-      <div className="px-6 py-3 border-b border-blue-green">
+      <div className="px-6 py-4 bg-[url(/title_background_watercolor_pattern01.jpg)]">
         <h1 className="text-lg font-bold text-center">すべての応募先サロン</h1>
       </div>
 
@@ -561,7 +561,7 @@ export default function MessageList({
         </div>
       )}
 
-      <div className="py-1 border-t border-gray-200 relative z-50 bg-white">
+      <div className="pt-1 pb-4 border-t border-gray-200 relative z-50 bg-white">
         <div className="flex justify-around">
           <div
             className="flex flex-col items-center gap-1 justify-center w-18"
