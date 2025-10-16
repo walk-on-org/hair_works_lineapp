@@ -48,10 +48,13 @@ export default function MessageDetail({
   const [selectAttachment, setSelectAttachment] = useState<boolean>(false);
   const imageFileRef = useRef<HTMLInputElement>(null);
   const fileRef = useRef<HTMLInputElement>(null);
+  const [isSendingMessage, setIsSendingMessage] = useState<boolean>(false); // 送信中か
+  const [isRemovingMessage, setIsRemovingMessage] = useState<boolean>(false); // 削除中か
 
   // メッセージ送信
   const handleSendMessage = async () => {
     if (inputMessage.trim()) {
+      setIsSendingMessage(true);
       const newMessages = await onSendMessage(
         applicant.id,
         inputMessage,
@@ -61,14 +64,17 @@ export default function MessageDetail({
       setMessages(newMessages);
       scrollToBottom();
       setInputMessage("");
+      setIsSendingMessage(false);
     }
   };
 
   // メッセージ削除
   const handleRemoveMessage = async (messageId: number) => {
+    setIsRemovingMessage(true);
     const newMessages = await onRemoveMessage(applicant.id, messageId);
     setMessages(newMessages);
     setSelectedMessage(null);
+    setIsRemovingMessage(false);
   };
 
   // メッセージ長押し
@@ -200,6 +206,7 @@ export default function MessageDetail({
       return;
     }
 
+    setIsSendingMessage(true);
     const newMessages = await onSendMessage(
       applicant.id,
       "",
@@ -209,6 +216,7 @@ export default function MessageDetail({
     setMessages(newMessages);
     scrollToBottom();
     setSelectAttachment(false);
+    setIsSendingMessage(false);
     imageFileRef.current!.value = "";
     fileRef.current!.value = "";
   };
@@ -438,10 +446,14 @@ export default function MessageDetail({
           {/* 送信ボタン */}
           <button
             onClick={handleSendMessage}
-            disabled={!inputMessage.trim()}
+            disabled={!inputMessage.trim() || isSendingMessage}
             className="bg-blue-green text-white p-2 aspect-square rounded-lg disabled:bg-gray-300 disabled:cursor-not-allowed"
           >
-            <PaperAirplaneIcon className="w-5 h-5" />
+            {isSendingMessage ? (
+              <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-blue-400"></div>
+            ) : (
+              <PaperAirplaneIcon className="w-5 h-5" />
+            )}
           </button>
         </div>
       </div>
@@ -457,10 +469,11 @@ export default function MessageDetail({
             </p>
             <div className="flex gap-2 mt-4 justify-around">
               <button
-                className="bg-blue-green text-white p-2 rounded-lg cursor-pointer w-28 font-bold"
+                disabled={isRemovingMessage}
+                className="bg-blue-green text-white p-2 rounded-lg cursor-pointer w-28 font-bold disabled:bg-gray-300 disabled:cursor-not-allowed"
                 onClick={() => handleRemoveMessage(selectedMessage.id)}
               >
-                削除
+                {isRemovingMessage ? "削除中..." : "削除"}
               </button>
               <button
                 className="border border-gray-600 bg-white text-gray-600 p-2 rounded-lg cursor-pointer w-28"
