@@ -421,7 +421,6 @@ export default function MessageDetail({
             type="file"
             className="hidden"
             accept="image/*"
-            capture="environment"
             ref={imageFileRef}
             onChange={(e) => handleSendFileUpload(e, "image")}
           />
@@ -438,7 +437,7 @@ export default function MessageDetail({
             value={inputMessage}
             onFocus={() => setSelectAttachment(false)}
             onChange={(e) => setInputMessage(e.target.value)}
-            placeholder="サロンへのメッセージを入力..."
+            placeholder="メッセージを入力..."
             className="flex-1 border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-1 focus:ring-blue-green"
             rows={rows}
             maxLength={500}
