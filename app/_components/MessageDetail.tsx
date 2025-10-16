@@ -7,8 +7,8 @@ import {
   PaperAirplaneIcon,
   DocumentIcon,
   PhotoIcon,
-  ChevronRightIcon,
   ArrowTopRightOnSquareIcon,
+  PaperClipIcon,
 } from "@heroicons/react/24/outline";
 import toast from "react-hot-toast";
 import Image from "next/image";
@@ -393,29 +393,12 @@ export default function MessageDetail({
       <div className="border-t border-gray-200 px-3 py-2">
         <div className="flex space-x-2 items-end">
           {/* 添付ファイル */}
-          {!selectAttachment ? (
-            <button
-              className="p-2 aspect-square"
-              onClick={() => setSelectAttachment(!selectAttachment)}
-            >
-              <ChevronRightIcon className="w-5 h-5" />
-            </button>
-          ) : (
-            <>
-              <button
-                className="p-2 aspect-square"
-                onClick={() => imageFileRef.current?.click()}
-              >
-                <PhotoIcon className="w-5 h-5" />
-              </button>
-              <button
-                className="p-2 aspect-square"
-                onClick={() => fileRef.current?.click()}
-              >
-                <DocumentIcon className="w-5 h-5" />
-              </button>
-            </>
-          )}
+          <button
+            className="p-2 aspect-square"
+            onClick={() => setSelectAttachment(!selectAttachment)}
+          >
+            <PaperClipIcon className="w-5 h-5 text-blue-green stroke-2" />
+          </button>
           {/* 画像ファイル選択 */}
           <input
             type="file"
@@ -456,6 +439,38 @@ export default function MessageDetail({
           </button>
         </div>
       </div>
+
+      {/* 添付ファイル選択ポップアップ */}
+      {selectAttachment && (
+        <div
+          className="absolute top-0 left-0 w-full h-full bg-black/50"
+          onClick={() => setSelectAttachment(false)}
+        >
+          <div className="bg-white p-6 rounded absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-56 border-t-6 border-blue-green">
+            <h3 className="font-bold mb-6 text-center">添付ファイルを選択</h3>
+            <div className="flex flex-col gap-2 items-center">
+              <button
+                className="flex justify-center items-center gap-2 px-4 py-1 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors w-full bg-blue-green text-white"
+                onClick={() => {
+                  imageFileRef.current?.click();
+                }}
+              >
+                <PhotoIcon className="w-8 h-8" />
+                <span className="font-bold text-sm">画像</span>
+              </button>
+              <button
+                className="flex justify-center items-center gap-2 px-4 py-1 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors w-full bg-blue-green text-white"
+                onClick={() => {
+                  fileRef.current?.click();
+                }}
+              >
+                <DocumentIcon className="w-8 h-8" />
+                <span className="font-bold text-sm">ファイル</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* メッセージ削除メニュー */}
       {selectedMessage && (
