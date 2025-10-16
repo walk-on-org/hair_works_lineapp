@@ -57,14 +57,15 @@ export async function loginVerifyToken(
 // ログインAPI（初回、メールアドレスとパスワードでログイン）
 export async function loginByEmail(
   email: string,
-  password: string
+  password: string,
+  lineUserId: string
 ): Promise<LoginResponse> {
   try {
     const result = await apiCall<LoginResponse>(
       "/api/v1/auth/login_line_app_email",
       {
         method: "POST",
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ email, password, line_user_id: lineUserId }),
       }
     );
     return result;

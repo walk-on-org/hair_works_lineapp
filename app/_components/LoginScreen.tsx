@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useGlobalContext } from "@/hooks/useGlobalContext";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { loginByEmail } from "@/services/messageService";
 import Image from "next/image";
@@ -17,6 +18,7 @@ interface LoginScreenProps {
 
 export default function LoginScreen({ onLoginSuccess }: LoginScreenProps) {
   const [isLoading, setIsLoading] = useState(false);
+  const { liff } = useGlobalContext();
   const {
     register,
     handleSubmit,
@@ -25,10 +27,14 @@ export default function LoginScreen({ onLoginSuccess }: LoginScreenProps) {
 
   const onSubmit: SubmitHandler<FormData> = async (data) => {
     setIsLoading(true);
-    console.log(data);
 
     try {
-      const response = await loginByEmail(data.email, data.password);
+      const profile = await liff?.getProfile();
+      const response = await loginByEmail(
+        data.email,
+        data.password,
+        profile?.userId ?? ""
+      );
 
       if (response.data && response.data.result === 0) {
         throw new Error(response.data.message ?? "ログインに失敗しました");
@@ -51,7 +57,6 @@ export default function LoginScreen({ onLoginSuccess }: LoginScreenProps) {
     } finally {
       setIsLoading(false);
     }
-    setIsLoading(false);
   };
 
   return (
