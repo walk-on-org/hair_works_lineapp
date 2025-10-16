@@ -40,6 +40,13 @@ export default function Home() {
             // メッセージ一覧表示
             setAccessToken(res.data.access_token);
             setIsLoading(false);
+
+            // URLパラメータのtokenを削除
+            if (token) {
+              const url = new URL(window.location.href);
+              url.searchParams.delete("token");
+              window.history.replaceState({}, "", url.toString());
+            }
           } else {
             // ログイン画面表示
             setNeedLogin(true);
