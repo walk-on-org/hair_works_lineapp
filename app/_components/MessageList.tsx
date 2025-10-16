@@ -92,6 +92,8 @@ export default function MessageList({ accessToken }: MessageListProps) {
 
   // メッセージ一覧を更新
   const handleRefresh = () => {
+    setSearchQuery("");
+    setConfirmedQuery("");
     loadMessages(accessToken);
   };
 
@@ -179,7 +181,7 @@ export default function MessageList({ accessToken }: MessageListProps) {
 
   // 設定メニューを開く
   const handleOpenSettings = () => {
-    setIsSettingsMenuOpen(true);
+    setIsSettingsMenuOpen(!isSettingsMenuOpen);
   };
 
   // 設定メニューを閉じる
@@ -470,15 +472,17 @@ export default function MessageList({ accessToken }: MessageListProps) {
               setConfirmedQuery((e.target as HTMLInputElement).value);
             }}
           />
-          <div
-            className="absolute inset-y-0 right-0 pr-3 flex items-center cursor-pointer"
-            onClick={() => {
-              setSearchQuery("");
-              setConfirmedQuery("");
-            }}
-          >
-            <XMarkIcon className="h-5 w-5 text-gray-400" />
-          </div>
+          {searchQuery !== "" && (
+            <div
+              className="absolute inset-y-0 right-0 pr-3 flex items-center cursor-pointer"
+              onClick={() => {
+                setSearchQuery("");
+                setConfirmedQuery("");
+              }}
+            >
+              <XMarkIcon className="h-5 w-5 text-gray-400" />
+            </div>
+          )}
         </div>
       </div>
 
@@ -560,7 +564,7 @@ export default function MessageList({ accessToken }: MessageListProps) {
             onClick={handleRefresh}
           >
             <div className="rounded-full px-4 py-1">
-              <HomeIcon className="w-5 h-5 stroke-2" />
+              <HomeIcon className="w-5 h-5" />
             </div>
             <p className="text-xs font-bold">ホーム</p>
           </div>
@@ -571,9 +575,9 @@ export default function MessageList({ accessToken }: MessageListProps) {
             className="flex flex-col items-center gap-1 justify-center w-18"
           >
             <div className="rounded-full px-4 py-1">
-              <MagnifyingGlassIcon className="w-5 h-5" />
+              <MagnifyingGlassIcon className="w-5 h-5 text-gray-400" />
             </div>
-            <p className="text-xs">求人を見る</p>
+            <p className="text-xs text-gray-500">求人を見る</p>
           </a>
           <div
             className="flex flex-col items-center gap-1 justify-center w-18 cursor-pointer"
@@ -581,10 +585,14 @@ export default function MessageList({ accessToken }: MessageListProps) {
           >
             <div className="rounded-full px-4 py-1">
               <Cog8ToothIcon
-                className={`w-5 h-5 ${isSettingsMenuOpen && "stroke-2"}`}
+                className={`w-5 h-5 ${!isSettingsMenuOpen && "text-gray-400"}`}
               />
             </div>
-            <p className={`text-xs ${isSettingsMenuOpen && "font-bold"}`}>
+            <p
+              className={`text-xs ${
+                isSettingsMenuOpen ? "font-bold" : "text-gray-500"
+              }`}
+            >
               その他/設定
             </p>
           </div>
