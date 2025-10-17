@@ -11,6 +11,7 @@ import {
 import { LoginResponse } from "@/types/message";
 import LoginScreen from "./_components/LoginScreen";
 import Image from "next/image";
+import { useOrientation } from "@/hooks/useOrientation";
 
 export default function Home() {
   const { liff, liffError } = useGlobalContext();
@@ -18,9 +19,7 @@ export default function Home() {
   const [accessToken, setAccessToken] = useState<string | null>(null);
   const [needLogin, setNeedLogin] = useState(false);
   const [lineUserId, setLineUserId] = useState<string | null>(null);
-  const [isLandscape, setIsLandscape] = useState<boolean>(() => {
-    return window.innerWidth > window.innerHeight;
-  });
+  const isLandscape = useOrientation();
 
   useEffect(() => {
     (async () => {
@@ -67,21 +66,6 @@ export default function Home() {
       }
     })();
   }, [liff]);
-
-  useEffect(() => {
-    function onResize() {
-      setIsLandscape(window.innerWidth > window.innerHeight);
-    }
-
-    window.addEventListener("resize", onResize);
-    // 一部のブラウザでは orientationchange もキャッチ
-    window.addEventListener("orientationchange", onResize);
-
-    return () => {
-      window.removeEventListener("resize", onResize);
-      window.removeEventListener("orientationchange", onResize);
-    };
-  }, []);
 
   const handleLoginSuccess = (token: string, lineUserId: string) => {
     setAccessToken(token);
