@@ -84,10 +84,10 @@ export default function MessageDetail({
       return;
     }
 
-    // 長押しを検知（800ms）
+    // 長押しを検知（1000ms）
     timerRef.current = setTimeout(() => {
       setSelectedMessage(message); // メニューを表示する
-    }, 800);
+    }, 1000);
   };
   const handleTouchEnd = () => {
     // 長押し解除（タップなど）
