@@ -25,7 +25,7 @@ export default function SlideInMenu({
     },
     {
       label: "プライバシーポリシー",
-      href: "/",
+      href: "/privacy-policy",
       title: "",
     },
     {

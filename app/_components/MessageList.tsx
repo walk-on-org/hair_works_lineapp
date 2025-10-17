@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import MessageDetail from "./MessageDetail";
-import SlideInMenu from "./SlideInMenu";
+import BottomNavigationWithMenu from "./BottomNavigationWithMenu";
 import { Applicant, Message } from "@/types/message";
 import {
   fetchApplicantMessageList,
@@ -11,12 +11,7 @@ import {
   removeMessage,
   alreadyReadMessage,
 } from "@/services/messageService";
-import {
-  MagnifyingGlassIcon,
-  Cog8ToothIcon,
-  HomeIcon,
-  XMarkIcon,
-} from "@heroicons/react/24/outline";
+import { MagnifyingGlassIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import toast from "react-hot-toast";
 import Image from "next/image";
 
@@ -42,7 +37,6 @@ export default function MessageList({
   >(null);
   const [isExiting, setIsExiting] = useState(false);
   const [isEntering, setIsEntering] = useState(false);
-  const [isSettingsMenuOpen, setIsSettingsMenuOpen] = useState(false);
 
   // メッセージ一覧を取得
   const loadMessages = async (accessToken: string) => {
@@ -181,16 +175,6 @@ export default function MessageList({
       // アニメーション状態をリセット
       setIsEntering(false);
     }, 300); // アニメーション時間と一致
-  };
-
-  // 設定メニューを開く
-  const handleOpenSettings = () => {
-    setIsSettingsMenuOpen(!isSettingsMenuOpen);
-  };
-
-  // 設定メニューを閉じる
-  const handleCloseSettings = () => {
-    setIsSettingsMenuOpen(false);
   };
 
   // メッセージ送信
@@ -565,53 +549,10 @@ export default function MessageList({
         </div>
       )}
 
-      <div className="py-1 border-t border-gray-200 relative z-50 bg-white">
-        <div className="flex justify-around">
-          <div
-            className="flex flex-col items-center gap-1 justify-center w-18"
-            onClick={handleRefresh}
-          >
-            <div className="rounded-full px-4 py-1">
-              <HomeIcon className="w-5 h-5" />
-            </div>
-            <p className="text-xs font-bold">ホーム</p>
-          </div>
-          <a
-            href={`${process.env.NEXT_PUBLIC_BASE_URL}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex flex-col items-center gap-1 justify-center w-18"
-          >
-            <div className="rounded-full px-4 py-1">
-              <MagnifyingGlassIcon className="w-5 h-5 text-gray-400" />
-            </div>
-            <p className="text-xs text-gray-500">求人を見る</p>
-          </a>
-          <div
-            className="flex flex-col items-center gap-1 justify-center w-18 cursor-pointer"
-            onClick={handleOpenSettings}
-          >
-            <div className="rounded-full px-4 py-1">
-              <Cog8ToothIcon
-                className={`w-5 h-5 ${!isSettingsMenuOpen && "text-gray-400"}`}
-              />
-            </div>
-            <p
-              className={`text-xs ${
-                isSettingsMenuOpen ? "font-bold" : "text-gray-500"
-              }`}
-            >
-              その他/設定
-            </p>
-          </div>
-        </div>
-      </div>
-
-      {/* 設定メニュー */}
-      <SlideInMenu
-        isOpen={isSettingsMenuOpen}
-        onClose={handleCloseSettings}
+      <BottomNavigationWithMenu
+        onHomeClick={handleRefresh}
         onLogout={onLogout}
+        showJobSearch={true}
       />
     </div>
   );
