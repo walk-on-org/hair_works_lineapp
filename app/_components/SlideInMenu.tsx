@@ -10,12 +10,14 @@ interface SlideInMenuProps {
   isOpen: boolean;
   onClose: () => void;
   onLogout: () => void;
+  showLogout?: boolean;
 }
 
 export default function SlideInMenu({
   isOpen,
   onClose,
   onLogout,
+  showLogout = true,
 }: SlideInMenuProps) {
   const items = [
     {
@@ -28,18 +30,22 @@ export default function SlideInMenu({
       href: "/privacy-policy",
       title: "",
     },
-    {
-      label: "ログアウト",
-      href: "#",
-      onClick: onLogout,
-      icon: (
-        <ArrowRightStartOnRectangleIcon
-          className="w-4 h-4 text-red-400"
-          strokeWidth={2}
-        />
-      ),
-      title: "",
-    },
+    ...(showLogout
+      ? [
+          {
+            label: "ログアウト",
+            href: "#",
+            onClick: onLogout,
+            icon: (
+              <ArrowRightStartOnRectangleIcon
+                className="w-4 h-4 text-red-400"
+                strokeWidth={2}
+              />
+            ),
+            title: "",
+          },
+        ]
+      : []),
   ];
 
   return (

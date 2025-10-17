@@ -10,14 +10,12 @@ interface BottomNavigationProps {
   onHomeClick?: () => void;
   onSettingsClick?: () => void;
   isSettingsActive?: boolean;
-  showJobSearch?: boolean;
 }
 
 export default function BottomNavigation({
   onHomeClick,
   onSettingsClick,
   isSettingsActive = false,
-  showJobSearch = true,
 }: BottomNavigationProps) {
   return (
     <div className="py-1 border-t border-gray-200 relative z-50 bg-white">
@@ -33,20 +31,18 @@ export default function BottomNavigation({
           <p className="text-xs font-bold">ホーム</p>
         </div>
 
-        {/* 求人を見る（オプション） */}
-        {showJobSearch && (
-          <a
-            href={`${process.env.NEXT_PUBLIC_BASE_URL}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex flex-col items-center gap-1 justify-center w-18"
-          >
-            <div className="rounded-full px-4 py-1">
-              <MagnifyingGlassIcon className="w-5 h-5 text-gray-400" />
-            </div>
-            <p className="text-xs text-gray-500">求人を見る</p>
-          </a>
-        )}
+        {/* 求人を見る */}
+        <a
+          href={`${process.env.NEXT_PUBLIC_BASE_URL}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="flex flex-col items-center gap-1 justify-center w-18"
+        >
+          <div className="rounded-full px-4 py-1">
+            <MagnifyingGlassIcon className="w-5 h-5 text-gray-400" />
+          </div>
+          <p className="text-xs text-gray-500">求人を見る</p>
+        </a>
 
         {/* その他/設定 */}
         <div

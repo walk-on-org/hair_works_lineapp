@@ -42,7 +42,7 @@ export default function PrivacyPolicy() {
         <BottomNavigationWithMenu
           onHomeClick={handleHomeClick}
           onLogout={handleLogout}
-          showJobSearch={true}
+          showLogout={false}
         />
       </div>
     </main>

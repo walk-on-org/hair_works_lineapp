@@ -7,13 +7,13 @@ import SlideInMenu from "./SlideInMenu";
 interface BottomNavigationWithMenuProps {
   onHomeClick?: () => void;
   onLogout: () => void;
-  showJobSearch?: boolean;
+  showLogout?: boolean;
 }
 
 export default function BottomNavigationWithMenu({
   onHomeClick,
   onLogout,
-  showJobSearch = true,
+  showLogout = true,
 }: BottomNavigationWithMenuProps) {
   const [isSettingsMenuOpen, setIsSettingsMenuOpen] = useState(false);
 
@@ -32,13 +32,13 @@ export default function BottomNavigationWithMenu({
         onHomeClick={onHomeClick}
         onSettingsClick={handleOpenSettings}
         isSettingsActive={isSettingsMenuOpen}
-        showJobSearch={showJobSearch}
       />
 
       <SlideInMenu
         isOpen={isSettingsMenuOpen}
         onClose={handleCloseSettings}
         onLogout={onLogout}
+        showLogout={showLogout}
       />
     </>
   );

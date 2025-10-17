@@ -552,7 +552,6 @@ export default function MessageList({
       <BottomNavigationWithMenu
         onHomeClick={handleRefresh}
         onLogout={onLogout}
-        showJobSearch={true}
       />
     </div>
   );
