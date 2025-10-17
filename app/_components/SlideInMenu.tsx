@@ -22,7 +22,7 @@ export default function SlideInMenu({
   const items = [
     {
       label: "利用規約",
-      href: "/",
+      href: "/terms",
       title: "アプリケーションについて",
     },
     {
