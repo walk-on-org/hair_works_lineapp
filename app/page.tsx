@@ -10,6 +10,7 @@ import {
 } from "@/services/messageService";
 import { LoginResponse } from "@/types/message";
 import LoginScreen from "./_components/LoginScreen";
+import Image from "next/image";
 
 export default function Home() {
   const { liff, liffError } = useGlobalContext();
@@ -109,8 +110,12 @@ export default function Home() {
     >
       {isLoading ? (
         <div className="flex items-center justify-center min-h-screen">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-400"></div>
-          <span className="ml-2 text-gray-600">読み込み中...</span>
+          <Image
+            src="LINE_spinner_light.svg"
+            alt="logo"
+            width={40}
+            height={40}
+          />
         </div>
       ) : liffError ? (
         <div className="flex items-center justify-center min-h-screen">

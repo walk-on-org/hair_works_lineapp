@@ -492,8 +492,12 @@ export default function MessageList({
 
       {loading && (
         <div className="flex items-center justify-center py-8 flex-1">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-400"></div>
-          <span className="ml-2 text-gray-600">読み込み中...</span>
+          <Image
+            src="LINE_spinner_light.svg"
+            alt="logo"
+            width={40}
+            height={40}
+          />
         </div>
       )}
 
