@@ -394,7 +394,7 @@ export default function MessageDetail({
         <div className="flex space-x-2 items-end">
           {/* 添付ファイル */}
           <button
-            className="p-2 aspect-square"
+            className="px-2 py-2.5 aspect-square"
             onClick={() => setSelectAttachment(!selectAttachment)}
           >
             <PaperClipIcon className="w-5 h-5 text-blue-green stroke-2" />
@@ -429,7 +429,7 @@ export default function MessageDetail({
           <button
             onClick={handleSendMessage}
             disabled={!inputMessage.trim() || isSendingMessage}
-            className="bg-blue-green text-white p-2 aspect-square rounded-lg disabled:bg-gray-300 disabled:cursor-not-allowed"
+            className="bg-blue-green text-white px-2 py-2.5 aspect-square rounded-lg disabled:bg-gray-300 disabled:cursor-not-allowed"
           >
             {isSendingMessage ? (
               <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-blue-400"></div>
