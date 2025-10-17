@@ -146,21 +146,6 @@ export default function LoginScreen({ onLoginSuccess }: LoginScreenProps) {
             </a>
           </div>
         </form>
-
-        {/* テスト用アカウント情報 */}
-        <div className="mt-6 p-4 bg-gray-50 rounded-lg">
-          <h3 className="text-sm font-medium text-gray-700 mb-2">
-            テスト用アカウント
-          </h3>
-          <div className="text-xs text-gray-600 space-y-1">
-            <p>
-              <strong>メール:</strong> test@example.com
-            </p>
-            <p>
-              <strong>パスワード:</strong> password
-            </p>
-          </div>
-        </div>
       </div>
     </div>
   );
