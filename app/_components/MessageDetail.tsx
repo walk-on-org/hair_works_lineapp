@@ -223,7 +223,7 @@ export default function MessageDetail({
 
   return (
     <div
-      className={`max-w-md mx-auto flex flex-col h-dvh transition-all duration-300  ${
+      className={`w-full mx-auto flex flex-col h-full transition-all duration-300  ${
         isListEntering && "animate-slide-out-right"
       }`}
     >
@@ -382,7 +382,7 @@ export default function MessageDetail({
           );
         })}
         {messages.length === 0 && (
-          <div className="text-gray-500 h-full flex items-center justify-center">
+          <div className="text-gray-500 h-[calc(100%-32px)] flex items-center justify-center">
             <p className="text-sm">メッセージがありません</p>
           </div>
         )}

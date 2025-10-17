@@ -441,7 +441,7 @@ export default function MessageList({
 
   return (
     <div
-      className={`max-w-md mx-auto flex flex-col h-dvh transition-all duration-300 ${
+      className={`w-full mx-auto flex flex-col h-full transition-all duration-300 ${
         isExiting && "animate-slide-out-left"
       }`}
     >
@@ -499,7 +499,7 @@ export default function MessageList({
 
       {/* メッセージ一覧 */}
       {!loading && (
-        <div className="divide-y divide-gray-200 flex-1">
+        <div className="divide-y divide-gray-200 flex-1 overflow-y-auto">
           {filteredApplicants.map((applicant) => (
             <div
               key={applicant.id}
@@ -561,7 +561,7 @@ export default function MessageList({
         </div>
       )}
 
-      <div className="pt-1 pb-4 border-t border-gray-200 relative z-50 bg-white">
+      <div className="py-1 border-t border-gray-200 relative z-50 bg-white">
         <div className="flex justify-around">
           <div
             className="flex flex-col items-center gap-1 justify-center w-18"

@@ -17,6 +17,9 @@ export default function Home() {
   const [accessToken, setAccessToken] = useState<string | null>(null);
   const [needLogin, setNeedLogin] = useState(false);
   const [lineUserId, setLineUserId] = useState<string | null>(null);
+  const [isLandscape, setIsLandscape] = useState<boolean>(() => {
+    return window.innerWidth > window.innerHeight;
+  });
 
   useEffect(() => {
     (async () => {
@@ -64,6 +67,21 @@ export default function Home() {
     })();
   }, [liff]);
 
+  useEffect(() => {
+    function onResize() {
+      setIsLandscape(window.innerWidth > window.innerHeight);
+    }
+
+    window.addEventListener("resize", onResize);
+    // 一部のブラウザでは orientationchange もキャッチ
+    window.addEventListener("orientationchange", onResize);
+
+    return () => {
+      window.removeEventListener("resize", onResize);
+      window.removeEventListener("orientationchange", onResize);
+    };
+  }, []);
+
   const handleLoginSuccess = (token: string, lineUserId: string) => {
     setAccessToken(token);
     setNeedLogin(false);
@@ -84,7 +102,11 @@ export default function Home() {
   };
 
   return (
-    <main className="h-dvh bg-white text-gray-900">
+    <main
+      className={`h-dvh bg-white text-gray-900 ${
+        isLandscape ? "pb-[22px] px-[44px]" : "pb-[34px]"
+      }`}
+    >
       {isLoading ? (
         <div className="flex items-center justify-center min-h-screen">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-400"></div>

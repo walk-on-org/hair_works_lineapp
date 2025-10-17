@@ -60,7 +60,7 @@ export default function LoginScreen({ onLoginSuccess }: LoginScreenProps) {
   };
 
   return (
-    <div className="max-w-md mx-auto flex flex-col h-dvh">
+    <div className="w-full mx-auto flex flex-col h-full">
       {/* ヘッダー */}
       <div className="px-6 py-2 border-b border-blue-green">
         <Image src="/logo/main_logo_3.png" alt="logo" width={140} height={40} />
