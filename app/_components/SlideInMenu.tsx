@@ -52,7 +52,7 @@ export default function SlideInMenu({
     <>
       {/* オーバーレイ */}
       <div
-        className={`fixed inset-0 bg-black/60 z-30 transition-opacity duration-300 ease-in-out ${
+        className={`fixed inset-0 bg-black/60 z-60 transition-opacity duration-300 ease-in-out ${
           isOpen ? "opacity-100" : "opacity-0 pointer-events-none"
         }`}
         onClick={onClose}
@@ -60,7 +60,7 @@ export default function SlideInMenu({
 
       {/* メニュー */}
       <div
-        className={`fixed top-0 right-0 h-full w-64 bg-white shadow-xl z-40 transform transition-transform duration-300 ease-in-out ${
+        className={`fixed top-0 right-0 h-full w-64 bg-white shadow-xl z-70 transform transition-transform duration-300 ease-in-out ${
           isOpen ? "translate-x-0 opacity-100" : "translate-x-full opacity-0"
         }`}
       >
