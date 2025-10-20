@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { Applicant, Message } from "@/types/message";
 import {
   ChevronLeftIcon,
@@ -42,6 +42,7 @@ export default function MessageDetail({
   const [inputMessage, setInputMessage] = useState("");
   const [selectedMessage, setSelectedMessage] = useState<Message | null>(null);
   const [rows, setRows] = useState(1);
+  const messagesRef = useRef<HTMLDivElement>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const highlightedMessageRef = useRef<HTMLDivElement>(null);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
@@ -50,6 +51,8 @@ export default function MessageDetail({
   const fileRef = useRef<HTMLInputElement>(null);
   const [isSendingMessage, setIsSendingMessage] = useState<boolean>(false); // 送信中か
   const [isRemovingMessage, setIsRemovingMessage] = useState<boolean>(false); // 削除中か
+  const [loadedImagesCount, setLoadedImagesCount] = useState(0);
+  const [totalImagesCount, setTotalImagesCount] = useState(0);
 
   // メッセージ送信
   const handleSendMessage = async () => {
@@ -134,10 +137,40 @@ export default function MessageDetail({
     setRows(inputMessage.split("\n").length);
   }, [inputMessage]);
 
+  // 画像読み込み完了時のコールバック
+  const handleImageLoad = useCallback(() => {
+    setLoadedImagesCount((prev) => prev + 1);
+  }, []);
+
   // メッセージ履歴の最後までスクロール
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({});
-  };
+  const scrollToBottom = useCallback(() => {
+    const performScroll = () => {
+      if (messagesRef.current) {
+        messagesRef.current.scrollTo({
+          top: messagesRef.current.scrollHeight,
+        });
+        console.log("スクロール実行:", messagesRef.current?.scrollHeight);
+        console.log("現在のスクロール位置:", messagesRef.current?.scrollTop);
+      }
+    };
+
+    // 画像がある場合、全ての画像が読み込まれるまで待つ
+    if (totalImagesCount > 0) {
+      const checkImagesLoaded = () => {
+        if (loadedImagesCount >= totalImagesCount) {
+          // 全ての画像が読み込まれた後、即座にスクロール
+          performScroll();
+        } else {
+          // まだ読み込まれていない画像がある場合は再試行
+          setTimeout(checkImagesLoaded, 200);
+        }
+      };
+      checkImagesLoaded();
+    } else {
+      // 画像がない場合は即座にスクロール
+      performScroll();
+    }
+  }, [totalImagesCount, loadedImagesCount]);
 
   // ハイライトされたメッセージまでスクロール
   const scrollToHighlightedMessage = () => {
@@ -148,6 +181,16 @@ export default function MessageDetail({
     }
   };
 
+  // 画像の総数を計算
+  useEffect(() => {
+    const imageCount = messages.filter(
+      (message) => !message.deleted_at && message.content_type === "image"
+    ).length;
+    setTotalImagesCount(imageCount);
+    // メッセージが更新されたら画像読み込みカウンターをリセット
+    setLoadedImagesCount(0);
+  }, [messages]);
+
   // メッセージが更新された時は最下部にスクロール
   useEffect(() => {
     if (highlightedMessageId) {
@@ -155,7 +198,25 @@ export default function MessageDetail({
     } else {
       scrollToBottom();
     }
-  }, [messages, highlightedMessageId]);
+  }, [messages, highlightedMessageId, scrollToBottom]);
+
+  // 全ての画像が読み込まれた時にスクロール実行
+  useEffect(() => {
+    if (
+      totalImagesCount > 0 &&
+      loadedImagesCount >= totalImagesCount &&
+      !highlightedMessageId
+    ) {
+      setTimeout(() => {
+        scrollToBottom();
+      }, 100);
+    }
+  }, [
+    loadedImagesCount,
+    totalImagesCount,
+    highlightedMessageId,
+    scrollToBottom,
+  ]);
 
   const formatTime = (date: Date) => {
     return date.toLocaleTimeString("ja-JP", {
@@ -273,7 +334,7 @@ export default function MessageDetail({
       </div>
 
       {/* メッセージ履歴 */}
-      <div className="flex-1 overflow-y-auto p-4 space-y-4">
+      <div className="flex-1 overflow-y-auto p-4 space-y-4" ref={messagesRef}>
         {messages.map((message, index) => {
           const showDate =
             index === 0 ||
@@ -355,6 +416,11 @@ export default function MessageDetail({
                       height={300}
                       alt="添付ファイル"
                       className="w-full h-full object-cover rounded-lg"
+                      onLoad={handleImageLoad}
+                      onError={() => {
+                        // エラーでもカウントする
+                        handleImageLoad();
+                      }}
                     />
                   </div>
                 )}
