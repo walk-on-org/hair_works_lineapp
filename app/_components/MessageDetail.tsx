@@ -102,6 +102,7 @@ export default function MessageDetail({
     fetch(process.env.NEXT_PUBLIC_API_BASE_URL + attachment, {
       headers: {
         responseType: "blob",
+        method: "GET",
       },
     }).then((response) => {
       response
