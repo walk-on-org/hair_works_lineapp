@@ -101,7 +101,11 @@ export default function MessageDetail({
   const handleDownloadFile = async (attachment: string) => {
     try {
       // ダウンロードはLINEミニアプリで不可のため、ブラウザで開いてユーザーに保存してもらう
-      window.location.href = process.env.NEXT_PUBLIC_API_BASE_URL + attachment;
+      window.open(
+        process.env.NEXT_PUBLIC_API_BASE_URL + attachment,
+        "_blank",
+        "noopener,noreferrer"
+      );
     } catch (error) {
       console.error("ファイルのダウンロードに失敗しました:", error);
       toast.error("ファイルのダウンロードに失敗しました", {
