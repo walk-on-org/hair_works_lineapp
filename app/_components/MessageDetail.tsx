@@ -145,8 +145,6 @@ export default function MessageDetail({
         messagesRef.current.scrollTo({
           top: messagesRef.current.scrollHeight,
         });
-        console.log("スクロール実行:", messagesRef.current?.scrollHeight);
-        console.log("現在のスクロール位置:", messagesRef.current?.scrollTop);
       }
     };
 
@@ -301,13 +299,13 @@ export default function MessageDetail({
             ].map((item, index) => (
               <span
                 key={index}
-                className="text-xs bg-black text-white px-2 py-1 rounded font-bold"
+                className="text-xs bg-black text-white px-1.5 py-0.5 rounded font-bold"
               >
                 {item}
               </span>
             ))}
           </div>
-          <h1 className="font-semibold">{applicant.office_name}</h1>
+          <h1 className="font-bold">{applicant.office_name}</h1>
           <p className="text-xs">
             応募日時：
             {new Date(applicant.created_at).toLocaleString("ja-JP", {
