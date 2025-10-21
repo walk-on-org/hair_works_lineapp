@@ -97,29 +97,6 @@ export default function MessageDetail({
     if (timerRef.current) clearTimeout(timerRef.current);
   };
 
-  // ファイルダウンロード
-  const handleDownloadFile = async (attachment: string) => {
-    try {
-      // ダウンロードはLINEミニアプリで不可のため、ブラウザで開いてユーザーに保存してもらう
-      window.open(
-        process.env.NEXT_PUBLIC_API_BASE_URL + attachment,
-        "_blank",
-        "noopener,noreferrer"
-      );
-    } catch (error) {
-      console.error("ファイルのダウンロードに失敗しました:", error);
-      toast.error("ファイルのダウンロードに失敗しました", {
-        style: {
-          border: "1px solid #ff0000",
-          padding: "12px 16px",
-          borderRadius: "10px",
-          fontSize: "14px",
-          fontWeight: "bold",
-        },
-      });
-    }
-  };
-
   // メッセージ入力エリアの行数を設定
   useEffect(() => {
     setRows(inputMessage.split("\n").length);
@@ -411,7 +388,7 @@ export default function MessageDetail({
                   </div>
                 )}
                 {!message.deleted_at && message.content_type === "file" && (
-                  <div
+                  <a
                     className={`max-w-xs lg:max-w-md px-4 py-2 rounded-lg text-gray-900 flex items-center gap-2 ${
                       message.sender_type === 1
                         ? "bg-gray-100"
@@ -421,13 +398,17 @@ export default function MessageDetail({
                     onTouchEnd={handleTouchEnd}
                     onMouseDown={() => handleTouchStart(message)} // PC対応
                     onMouseUp={handleTouchEnd}
-                    onClick={() => handleDownloadFile(message.attachment)}
+                    href={
+                      process.env.NEXT_PUBLIC_API_BASE_URL + message.attachment
+                    }
+                    target="_blank"
+                    rel="noopener noreferrer"
                   >
                     <DocumentIcon className="w-5 h-5" />
                     <p className="text-xs whitespace-pre-wrap font-bold">
                       {message.attachment.split("/").pop()}
                     </p>
-                  </div>
+                  </a>
                 )}
               </div>
             </div>
