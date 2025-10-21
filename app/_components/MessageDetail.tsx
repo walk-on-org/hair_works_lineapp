@@ -100,20 +100,8 @@ export default function MessageDetail({
   // ファイルダウンロード
   const handleDownloadFile = async (attachment: string) => {
     try {
-      const fileUrl = encodeURIComponent(
-        process.env.NEXT_PUBLIC_API_BASE_URL + attachment
-      );
-      const res = await fetch(`/api/download?url=${fileUrl}`);
-
-      const blob = await res.blob();
-      const a = document.createElement("a");
-      a.href = window.URL.createObjectURL(blob);
-      a.download = attachment.split("/").pop() ?? "";
-      // aタグ要素を画面に一時的に追加する
-      document.body.appendChild(a);
-      a.click();
-      // aタグ要素を画面から削除する
-      document.body.removeChild(a);
+      // ダウンロードはLINEミニアプリで不可のため、ブラウザで開いてユーザーに保存してもらう
+      window.location.href = process.env.NEXT_PUBLIC_API_BASE_URL + attachment;
     } catch (error) {
       console.error("ファイルのダウンロードに失敗しました:", error);
       toast.error("ファイルのダウンロードに失敗しました", {
