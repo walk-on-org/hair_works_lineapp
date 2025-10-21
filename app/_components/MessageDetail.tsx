@@ -98,39 +98,34 @@ export default function MessageDetail({
   };
 
   // ファイルダウンロード
-  const handleDownloadFile = (attachment: string) => {
-    fetch(process.env.NEXT_PUBLIC_API_BASE_URL + attachment, {
-      headers: {
-        responseType: "blob",
-        method: "GET",
-      },
-    }).then((response) => {
-      response
-        .blob()
-        .then((blob) => {
-          const url = window.URL.createObjectURL(blob);
-          const a = document.createElement("a");
-          a.href = url;
-          a.download = attachment.split("/").pop() ?? "";
-          // aタグ要素を画面に一時的に追加する
-          document.body.appendChild(a);
-          a.click();
-          // aタグ要素を画面から削除する
-          document.body.removeChild(a);
-        })
-        .catch((error) => {
-          console.error("ファイルのダウンロードに失敗しました:", error);
-          toast.error("ファイルのダウンロードに失敗しました", {
-            style: {
-              border: "1px solid #ff0000",
-              padding: "12px 16px",
-              borderRadius: "10px",
-              fontSize: "14px",
-              fontWeight: "bold",
-            },
-          });
-        });
-    });
+  const handleDownloadFile = async (attachment: string) => {
+    try {
+      const fileUrl = encodeURIComponent(
+        process.env.NEXT_PUBLIC_API_BASE_URL + attachment
+      );
+      const res = await fetch(`/api/download?url=${fileUrl}`);
+
+      const blob = await res.blob();
+      const a = document.createElement("a");
+      a.href = window.URL.createObjectURL(blob);
+      a.download = attachment.split("/").pop() ?? "";
+      // aタグ要素を画面に一時的に追加する
+      document.body.appendChild(a);
+      a.click();
+      // aタグ要素を画面から削除する
+      document.body.removeChild(a);
+    } catch (error) {
+      console.error("ファイルのダウンロードに失敗しました:", error);
+      toast.error("ファイルのダウンロードに失敗しました", {
+        style: {
+          border: "1px solid #ff0000",
+          padding: "12px 16px",
+          borderRadius: "10px",
+          fontSize: "14px",
+          fontWeight: "bold",
+        },
+      });
+    }
   };
 
   // メッセージ入力エリアの行数を設定
