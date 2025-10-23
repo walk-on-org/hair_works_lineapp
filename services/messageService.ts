@@ -127,7 +127,7 @@ export async function fetchApplicantMessageList(
     );
     return result.data.applicants;
   } catch (error) {
-    console.error("認証付きメッセージ一覧の取得に失敗しました:", error);
+    console.error("メッセージ一覧の取得に失敗しました:", error);
     throw error;
   }
 }
