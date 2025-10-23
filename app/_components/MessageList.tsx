@@ -145,12 +145,14 @@ export default function MessageList({
         // 検索でヒットしたメッセージIDを取得
         const messageId = getMatchedMessageId(applicant, confirmedQuery);
         setHighlightedMessageId(messageId);
-        // 既読処理
-        const fetchedApplicants: Applicant[] = await alreadyReadMessage(
-          applicant.id,
-          accessToken
-        );
-        setApplicants(fetchedApplicants);
+        // 既読処理（未読メッセージがある場合のみ）
+        if (applicant.unread_count > 0) {
+          const fetchedApplicants: Applicant[] = await alreadyReadMessage(
+            applicant.id,
+            accessToken
+          );
+          setApplicants(fetchedApplicants);
+        }
         // アニメーション状態をリセット
         setIsExiting(false);
       }, 300); // アニメーション時間と一致
