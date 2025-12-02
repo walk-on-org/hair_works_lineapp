@@ -49,6 +49,7 @@ export interface Applicant {
   last_activity: Date;
   unread_count: number;
   messages: Message[];
+  can_send_message: boolean;
 }
 
 export interface Message {

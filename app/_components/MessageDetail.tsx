@@ -429,8 +429,15 @@ export default function MessageDetail({
           <button
             className="px-2 py-2.5 aspect-square"
             onClick={() => setSelectAttachment(!selectAttachment)}
+            disabled={!applicant.can_send_message}
           >
-            <PaperClipIcon className="w-5 h-5 text-blue-green stroke-2" />
+            <PaperClipIcon
+              className={`w-5 h-5 stroke-2 ${
+                applicant.can_send_message
+                  ? "text-blue-green"
+                  : "text-gray-300 cursor-not-allowed"
+              }`}
+            />
           </button>
           {/* 画像ファイル選択 */}
           <input
@@ -453,15 +460,24 @@ export default function MessageDetail({
             value={inputMessage}
             onFocus={() => setSelectAttachment(false)}
             onChange={(e) => setInputMessage(e.target.value)}
-            placeholder="メッセージを入力..."
+            placeholder={
+              applicant.can_send_message
+                ? "メッセージを入力..."
+                : "メッセージを送信できません"
+            }
             className="flex-1 border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-1 focus:ring-blue-green"
             rows={rows}
+            disabled={!applicant.can_send_message}
             maxLength={500}
           />
           {/* 送信ボタン */}
           <button
             onClick={handleSendMessage}
-            disabled={!inputMessage.trim() || isSendingMessage}
+            disabled={
+              !inputMessage.trim() ||
+              isSendingMessage ||
+              !applicant.can_send_message
+            }
             className="bg-blue-green text-white px-2 py-2.5 aspect-square rounded-lg disabled:bg-gray-300 disabled:cursor-not-allowed"
           >
             {isSendingMessage ? (
